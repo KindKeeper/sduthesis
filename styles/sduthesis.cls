@@ -1,4 +1,3 @@
-% !Mode:: "TeX:UTF-8"
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
 \ProvidesClass{sduthesis}[2015/05/12 v1.0.5 Shandong University Thesis Template for Postgraduate]
 %------解决表格换行问题-------
@@ -53,6 +52,10 @@
   \newcommand{\heitiFakeBold}{\heiti}
 \fi
 %------中文支持------
+
+% ------ 参考文献支持 (新增) ------
+\RequirePackage{natbib} % 加载 natbib 宏包，提供更强大的参考文献引用格式
+% ------ 参考文献支持 (新增) ------
 
 %------行距------
 \linespread{1.3}
@@ -146,18 +149,6 @@
 %----不浮动----
 %------图表支持------
 
-%------交叉引用------
-\RequirePackage{hyperref}
-\hypersetup{unicode}
-\hypersetup{colorlinks=true}
-\hypersetup{linkcolor=black}
-\makeatletter
-\ifSDU@opt@print
-	\hypersetup{allcolors=black}
-\else\relax\fi
-\makeatother
-%------交叉引用------
-
 %--------目录-------------
 \makeatletter
 \def\@bfdottedtocline#1#2#3#4#5{%
@@ -205,10 +196,6 @@
 \newcommand\esubsection[1]{\addengcontents{subsection}{#1}}
 \newcommand\esubsubsection[1]{\addengcontents{subsubsection}{#1}}
 %—————————English Contents—————————————
-
-%------参考文献------
-\newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}
-%------参考文献------
 
 %------摘要环境------
 \newcommand\enabstractname{ABSTRACT}
@@ -333,6 +320,18 @@
  %   \pagenumbering{arabic}\setcounter{page}{1}
 }
 %------Make------
+
+%------交叉引用------
+\RequirePackage{hyperref}
+\hypersetup{unicode}
+\hypersetup{colorlinks=true}
+\hypersetup{linkcolor=black}
+\makeatletter
+\ifSDU@opt@print
+	\hypersetup{allcolors=black}
+\else\relax\fi
+\makeatother
+%------交叉引用------
 \endinput
 
 %------载入宏包------
