@@ -301,11 +301,11 @@
 %------中文风格------
 
 %------封面------
-\input{sduthesis-front-cover.def}
+\input{styles/sduthesis-front-cover.def}
 %------封面------
 
 %------声明------
-\input{sduthesis-statement.def}
+\input{styles/sduthesis-statement.def}
 %------声明------
 
 %------Make------
