@@ -1,15 +1,15 @@
-# 山东大学硕士/博士研究生毕业论文模板
+# sduthesis - 山东大学研究生学位论文 LaTeX 模板
 
-本论文模板在 XeLaTeX (Tex Live 2025) 环境下编译通过。
+一个优雅、规范、易于使用的 LaTeX 模板，用于撰写山东大学硕士与博士学位论文。
 
 ## 模板参照
 
-- [关于印发《山东大学学位论文规范（试行）》的通知](http://www.grad.sdu.edu.cn/getNewsDetail.site?newsId=36c1b735-e0a2-4018-9fb6-7dfb8fb10a39)，2007-09-19，查阅日期：2016年10月2日。
-- [关于使用新版博士、硕士学位论文封面的通知及封面填写要求](http://www.grad.sdu.edu.cn/getNewsDetail.site?newsId=a3b4f913-db00-449e-b61e-d48524ded89e)， 2012-04-13，查阅日期：2016年10月2日。
+- [关于印发《山东大学研究生学位论文撰写指南》的通知](http://www.me.sdu.edu.cn/info/1033/1838.htm)，山大研字〔2022〕1号，2022年1月5日
+- [2024版学位论文封面（扉页）](https://www.grad.sdu.edu.cn/info/1138/20664.htm)，2025年4月3日发布
 
 ## 模板特点
 
-本模板完全参照《山东大学学位论文规范（试行）》完成，同时针对理工科学位做了调整，满足毕业论文的撰写要求。
+本模板参照山东大学研究生学位论文撰写指南》完成，同时针对理工科学位做了调整，满足毕业论文的撰写要求。
 
 在之前版本基础上修复 bug 若干：
 
@@ -67,15 +67,22 @@
 
 将编译生成的 pdf 文件直接打印即可，注意要求打印社使用双面打印。
 
-## 获取与更新
+## 版权与许可
 
-请到项目的 GitHub 页获取： <https://github.com/cnDelbert/SDU_thesis_template_for_postgraduate>。
+本项目 (`sduthesis`) 是基于 [cnDelbert/SDU_thesis_template_for_postgraduate](https://github.com/cnDelbert/SDU_thesis_template_for_postgraduate) 的二次开发版本。
 
-### LICENSE
+- **原始项目**
+  - 作者：cnDelbert
+  - 许可：署名-非商业性使用 3.0 中国大陆 (CC BY-NC 3.0 CN)
 
-使用署名-非商业性使用 3.0协议，如果你使用了本论文模板，请务必提及。
+- **本衍生项目**
+  - 作者：KindKeeper
+  - 许可：署名-非商业性使用 4.0 国际 (CC BY-NC 4.0)
 
-该项许可协议允许他人基于非商业目的对您的作品重新编排、节选或者以您的作品为基础进行创作。尽管他们的新作品必须注明您的姓名并不得进行商业性使用，但是他们无需在以您的原作为基础创作的演绎作品上适用相同类型的许可条款。
+### 使用条件
 
-- 这是一份普通人可以理解的许可协议概要：<https://creativecommons.org/licenses/by-nc/3.0/cn/deed.zh>。
-- 这是对应的法律文本：<https://creativecommons.org/licenses/by-nc/3.0/cn/legalcode>。
+1. **署名**：必须注明原始作者 (cnDelbert) 和本作品作者 (KindKeeper)
+2. **非商业**：不得用于商业用途
+3. **相同方式共享**：基于本项目的衍生作品需使用相同许可协议
+
+[](https://creativecommons.org/licenses/by-nc/4.0/deed.zh)
