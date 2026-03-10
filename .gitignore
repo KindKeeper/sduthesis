@@ -1,46 +1,26 @@
-# =============================================
-# sduthesis LaTeX 毕业论文模板 - .gitignore 文件
-# 版本控制忽略规则（精简优化版）
-# =============================================
-
-# --- LaTeX 编译生成的临时文件 ---
-# 忽略所有编译过程中自动生成的辅助文件
-*.log
-*.aux
-*.dvi
-*.lof
-*.lot
-*.bit
-*.idx
-*.glo
-*.bbl
-*.ilg
-*.toc
-*.toe
-*.ind
-*.out
-*.blg
-*.synctex.gz
-*.fls
-*.fdb_latexmk
-*.sav
-*.xdv
-
-# --- 输出文件（PDF）处理 ---
-# 忽略根目录下编译生成的主PDF文件，避免提交大型二进制文件
+# 编译产物
+build/
 *.pdf
-# 例外：不忽略 figures/ 目录下的PDF文件（通常为论文插图）
-!/figures/*.pdf
 
-# --- 操作系统生成的隐藏文件 ---
-# 忽略系统自动生成的隐藏文件（跨平台兼容）
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-.DS_Store
+# 临时文件
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
 
-# --- 批处理脚本可能生成的临时文件 ---
-# 忽略脚本运行时的临时文件（如 clean.bat 清理的文件）
-*.bak
-*.tmp
+# 编辑器
+.vscode/
+.idea/
+*.swp
 *~
+
+# 操作系统
+.DS_Store
+Thumbs.db

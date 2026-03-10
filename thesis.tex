@@ -1,0 +1,81 @@
+%!Mode:: "TeX:UTF-8"
+%!TEX program = xelatex
+
+% ============================================
+% 山东大学学位论文 - 主文件
+% ============================================
+
+\documentclass[
+  master,               % master|doctor
+  colorcover,           % colorcover|bwcover
+  % blindreview,        % 取消注释启用盲审
+  % biblatex,           % 取消注释启用biblatex（需配合Zotero使用）
+]{sduthesis}
+
+% ============================================
+% 论文基本信息配置
+% ============================================
+\sdusetup{
+  title = {山东大学研究生学位论文\LaTeX{}模板},
+  titleen = {SDU Thesis Template Using LaTeX},
+  author = {张三},
+  studentid = {2024-001},
+  supervisor = {李四\quad 教授},
+  college = {计算机学院},
+  major = {计算机科学与技术},
+  date = {2025年6月},
+  fenlei = {TP391},
+  miji = {公开},
+}
+
+% ============================================
+% 正文开始
+% ============================================
+\begin{document}
+
+% 封面和声明
+\maketitle
+\makestatement
+
+% 目录
+\tableofcontents
+
+% 摘要
+\begin{cnabstract}
+本模板是符合山东大学研究生学位论文格式要求的\LaTeX{}模板。
+本文介绍了模板的结构和使用方法。
+
+\keywords{学位论文；\LaTeX{}；模板}
+\end{cnabstract}
+
+\begin{enabstract}
+This is a LaTeX template for Shandong University thesis.
+
+\keywordsen{Thesis; LaTeX; Template}
+\end{enabstract}
+
+% 正文
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\input{chapters/chapter1-introduction}
+\input{chapters/chapter2-related-work}
+\input{chapters/chapter3-methodology}
+\input{chapters/chapter4-experiments}
+\input{chapters/chapter5-conclusion}
+
+% 参考文献（传统方式）
+\begin{thebibliography}{99}
+\bibitem{example2024} 作者. 论文标题[J]. 期刊名, 2024, 1(1): 1-10.
+\bibitem{knuth1984} Knuth D E. The TeXbook[M]. Addison-Wesley, 1984.
+\end{thebibliography}
+
+% 如果使用 biblatex（启用biblatex选项后），请注释掉上面的thebibliography，使用：
+% \addbibresource{references.bib}  % 在导言区添加
+% \printbibliography                % 在此处打印参考文献
+
+% 致谢
+\input{chapters/acknowledgement}
+
+\end{document}

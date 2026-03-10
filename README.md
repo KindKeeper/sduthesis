@@ -1,88 +1,206 @@
-# sduthesis - 山东大学研究生学位论文 LaTeX 模板
+# sduthesis - 山东大学学位论文模板
 
-一个优雅、规范、易于使用的 LaTeX 模板，用于撰写山东大学硕士与博士学位论文。
+符合《山东大学研究生学位论文撰写指南》的 LaTeX 模板，极简设计，开箱即用。
 
-## 模板参照
+## 特点
 
-- [关于印发《山东大学研究生学位论文撰写指南》的通知](http://www.me.sdu.edu.cn/info/1033/1838.htm)，山大研字〔2022〕1号，2022年1月5日
-- [2024版学位论文封面（扉页）](https://www.grad.sdu.edu.cn/info/1138/20664.htm)，2025年4月3日发布
+- **极简配置**：仅需编辑 `thesis.tex` 一个文件
+- **标准工具链**：使用 `latexmk`（TeX Live 自带）
+- **跨平台**：支持 Windows/macOS/Linux
+- **开源字体**：默认使用 Fandol 字体，无需安装 Windows 字体
+- **现代 LaTeX3**：代码简洁，易于维护
 
-## 模板特点
+## 快速开始
 
-本模板参照山东大学研究生学位论文撰写指南》完成，同时针对理工科学位做了调整，满足毕业论文的撰写要求。
+### 1. 安装 TeX Live
 
-在之前版本基础上修复 bug 若干：
+```bash
+# macOS
+brew install --cask mactex
 
-- 修改论文封面。
-- 论文封面增加新的字段。
-- 增加英文摘要、中英文关键字。
-- 修复摘要 `minipage` 无法换页的问题。
-- 按要求修改页码显示方式。
-- 单页只能有两张图片的 bug。
-- 增加致谢、参考文献等章节。
-- 设置某些特定章节在目录中不参与编号。
-- 修复双页打印问题。
-- 使用 `tabincell` 完成表格内换行，多行表格可垂直居中。
-- 使用 `wrapfigure` 并添加 `wrapfig` 包。
-- 修复复制时英文字符映射为乱码的问题。
-- 修复目录页为 `minipage` 导致目录显示不全的问题。
-- 从目录中移除目录项 `nottoc` 参数。
-- 增加英文目录。
-- 修复目录页 `section` 等字段不显示点号的问题。
-- 去掉正文前 `section` 前的双 S 符号。
-- 增加定理定义等命令定义。
-- ……
+# Windows
+download from https://tug.org/texlive/
 
-特别感谢[ChenMeng0518](https://github.com/ChenMeng0518/sduthesis)同学提供学士学位论文模板。
-
-## 编译环境
-
-请使用 CTeX 套装进行编译，需要 `xelatex` 和 `pdflatex` 命令支持。
-
-如果你的 CTeX 套装中 ctex 包为 1.02c 或更早的版本，请将`SDUthesistemplate.tex`当中下面这句话取消注释：
-
-```latex
-% \expandafter\def\csname CTEX@spaceChar\endcsname{\hspace{1em}}
+# Ubuntu
+sudo apt-get install texlive-full
 ```
 
-## 代码结构
+### 2. 编译论文
 
-- `sduthesis-front-cover.def`： 封面。
-- `sduthesis-statement.def`： 原创性声明。
-- `SDUthesistemplate.tex`： 主文件，你的论文结构在此文件当中。
-- `sduthesis.cls`： 论文样式文件。
-- `fonts/`： 字体文件路径(用于自动加载字体)。
-- `figures/`： 图片存放路径，你也可以创建`figure`/`pictures`/`picture`/`pic`/`image`等路径。
-- `contents/`： 论文所在路径。其中`usersettings.tex` 为整个项目的设置。
+```bash
+# 完整编译（自动处理参考文献）
+latexmk
 
-## 怎样编译
+# 实时预览（保存文件自动重编译）
+latexmk -pvc
 
-文档使用 XeLaTeX 进行编译。这要求所有参与编译的文档必须使用 UTF8 编码格式，因此建议你新建的任何参与编译的 `.tex` 文件都必须使用 UTF-8 编码。
+# 清理临时文件
+latexmk -c
+```
 
-- 运行 `run.bat` 即可编译生成 pdf 文件。
-- 在运行失败时使用 `clean.bat` 清理项目。
-- 运行 `run_open.bat` 在编译完成之后打开 pdf 文件。
+编译完成后生成 `build/thesis.pdf`。
 
-### 打印
+## 目录结构
 
-将编译生成的 pdf 文件直接打印即可，注意要求打印社使用双面打印。
+```
+.
+├── thesis.tex          # 主文件：配置和结构
+├── thesis.bib          # 参考文献（Zotero 自动生成）
+├── latexmkrc           # 编译配置
+├── sduthesis.cls       # 文档类（一般不需要修改）
+├── chapters/           # 论文章节
+│   ├── chapter1-introduction.tex
+│   ├── chapter2-related-work.tex
+│   ├── chapter3-methodology.tex
+│   ├── chapter4-experiments.tex
+│   ├── chapter5-conclusion.tex
+│   └── acknowledgement.tex
+├── figures/            # 图片目录
+└── README.md
+```
 
-## 版权与许可
+## 使用方法
 
-本项目 (`sduthesis`) 是基于 [cnDelbert/SDU_thesis_template_for_postgraduate](https://github.com/cnDelbert/SDU_thesis_template_for_postgraduate) 的二次开发版本。
+### 1. 配置论文信息
 
-- **原始项目**
-  - 作者：cnDelbert
-  - 许可：署名-非商业性使用 3.0 中国大陆 (CC BY-NC 3.0 CN)
+编辑 `thesis.tex` 中的 `\sdusetup`：
 
-- **本衍生项目**
-  - 作者：KindKeeper
-  - 许可：署名-非商业性使用 4.0 国际 (CC BY-NC 4.0)
+```latex
+\sdusetup{
+  title = {你的论文题目},
+  title-en = {English Title},
+  author = {你的名字},
+  student-id = {学号},
+  supervisor = {导师姓名},
+  college = {学院名称},
+  major = {专业名称},
+  date = {2025年6月},
+}
+```
 
-### 使用条件
+### 2. 编写章节
 
-1. **署名**：必须注明原始作者 (cnDelbert) 和本作品作者 (KindKeeper)
-2. **非商业**：不得用于商业用途
-3. **相同方式共享**：基于本项目的衍生作品需使用相同许可协议
+在 `chapters/` 目录下创建 `.tex` 文件，然后在 `thesis.tex` 中引入：
 
-[](https://creativecommons.org/licenses/by-nc/4.0/deed.zh)
+```latex
+\input{chapters/chapter1-introduction}
+\input{chapters/chapter2-related-work}
+% ... 其他章节
+```
+
+### 3. 插入图片
+
+```latex
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/your-image.pdf}
+  \caption{图片标题}
+  \label{fig:label}
+\end{figure}
+```
+
+### 4. 引用文献
+
+使用 Zotero + Better BibTeX 插件管理文献，自动生成 `thesis.bib`。
+
+在正文中引用：
+
+```latex
+\cite{example2024}          % 普通引用
+\parencite{example2024}     % 括号引用
+\textcite{example2024}      % 作者-年份引用
+```
+
+## 文档类选项
+
+```latex
+\documentclass[
+  master,               % master|doctor
+  colorcover,           % colorcover|bwcover
+  % blindreview,        % 取消注释启用盲审
+  % biblatex,           % 取消注释启用biblatex
+]{sduthesis}
+```
+
+### biblatex 支持（可选）
+
+启用 `biblatex` 选项后，可使用 Zotero + Better BibTeX 管理文献：
+
+```latex
+\documentclass[biblatex]{sduthesis}
+\addbibresource{references.bib}  % 在导言区添加
+% ...
+\printbibliography  % 打印参考文献
+```
+
+编译链：`xelatex -> biber -> xelatex -> xelatex`（`latexmk` 自动处理）
+
+### 字体自动回退
+
+模板自动检测系统可用字体：
+- **Windows**：SimSun/SimHei
+- **Linux**：Fandol（TeX Live 自带）
+- **macOS**：Songti SC/Heiti SC
+
+## 编译流程
+
+```
+thesis.tex + thesis.bib
+    ↓
+latexmk (自动执行以下步骤)
+    ↓
+xelatex → biber → xelatex → xelatex
+    ↓
+build/thesis.pdf
+```
+
+## 常见问题
+
+### 字体找不到？
+
+- **Fandol（默认）**：TeX Live 自带，无需额外安装
+- **Windows**：需安装 SimSun/SimHei 字体
+- **macOS**：系统自带中文字体
+
+### 参考文献不显示？
+
+确保运行 `latexmk`（而非单独的 `xelatex`），以正确执行 biber。
+
+### 如何插入表格？
+
+```latex
+\begin{table}[htbp]
+  \centering
+  \caption{表格标题}
+  \begin{tabular}{lcc}
+    \toprule
+    列1 & 列2 & 列3 \\
+    \midrule
+    数据1 & 数据2 & 数据3 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+```
+
+## 模板参数对照
+
+| 参数 | 说明 | 示例 |
+|------|------|------|
+| `title` | 中文标题 | 基于深度学习的图像分类 |
+| `title-en` | 英文标题 | Deep Learning ... |
+| `author` | 作者姓名 | 张三 |
+| `student-id` | 学号 | 2024-001 |
+| `supervisor` | 导师 | 李四 教授 |
+| `college` | 学院 | 计算机学院 |
+| `major` | 专业 | 计算机科学与技术 |
+| `date` | 日期 | 2025年6月 |
+| `fenlei` | 中图分类号 | TP391 |
+| `miji` | 密级 | 公开 |
+
+## 许可证
+
+CC BY-NC 4.0 - 署名-非商业性使用
+
+## 致谢
+
+基于 [cnDelbert/SDU_thesis_template_for_postgraduate](https://github.com/cnDelbert/SDU_thesis_template_for_postgraduate) 重构。
