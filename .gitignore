@@ -1,30 +1,84 @@
-# 编译产物
-build/
-*.pdf
+# ============================================================
+#  sduthesis —— .gitignore
+#
+#  原则：本仓库**面向使用者**，只提交"写论文需要"的文件。
+#       开发、验证、维护、AI 代理文档一律忽略，不进公开仓库。
+#
+#  若将来需要恢复某类文件（例如 CI），把对应规则删掉或用
+#  `git add -f <路径>` 强制加入。
+# ============================================================
 
-# 临时文件
+# ---------- LaTeX 编译产物 ----------
+build/
 *.aux
-*.bbl
-*.bcf
-*.blg
-*.fdb_latexmk
-*.fls
 *.log
 *.out
-*.run.xml
-*.synctex.gz
 *.toc
-*.toe
-*.lot
 *.lof
+*.lot
+*.toe
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.fls
+*.fdb_latexmk
+*.synctex.gz
 *.xdv
+*.idx
+*.ind
+*.ilg
+*.sav
+*.thm
+*.nav
+*.snm
+*.vrb
 
-# 编辑器
+# ---------- PDF：只保留 figures 下的图片资源 ----------
+*.pdf
+!figures/*.pdf
+!figures/**/*.pdf
+
+# ---------- AI 代理与维护者文档（不面向使用者）----------
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.cursorrules
+.cursor/
+.github/
+
+# ---------- 验证层与判据文档 ----------
+docs/
+tests/
+test_simple.tex
+matrixrc
+
+# ---------- 构建脚本的额外入口 ----------
+# 使用者用 latexmk 或 build.ps1 即可，Makefile 属维护工具
+Makefile
+
+# ---------- 发布与审计记录 ----------
+CHANGELOG.md
+REPORT.md
+
+# ---------- 本地实验（真实论文、对比渲染等一律不入库）----------
+dev/
+thesis-test/
+compare/
+fixtures/
+
+# ---------- 个人环境覆盖 ----------
+sdusetup.local.tex
+*.local.*
+
+# ---------- 编辑器 ----------
 .vscode/
 .idea/
 *.swp
+*.swo
 *~
 
-# 操作系统
+# ---------- 操作系统 ----------
 .DS_Store
 Thumbs.db
+desktop.ini
