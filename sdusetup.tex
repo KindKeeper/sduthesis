@@ -1,0 +1,37 @@
+%!Mode:: "TeX:UTF-8"
+% ============================================================
+%  sdusetup.tex —— 论文基本信息
+%
+%  ★ 这是你唯一"必须"修改的文件。
+%  升级模板时，只需保留本文件与 chapters/、figures/、refs.bib，
+%  其余文件可被新版整包覆盖，你的论文信息不会丢失。
+%
+%  ⚠ 花括号内不要留空行：TeX 中空行等于 \par，会打断键值列表。
+%     需要分隔时用 % 注释行。
+%
+%  封面字段与 2024 版《学位论文封面（扉页）》一一对应。
+% ============================================================
+
+\sdusetup{
+  % ---- 题目 ----
+  title       = {论文题目待定},
+  titleen     = {Title to Be Determined},
+  % ---- 作者与学籍 ----
+  author      = {张三},
+  studentid   = {2020xxxxxxxx},
+  college     = {示例学院},
+  trainingmode= {全日制},
+  major       = {示例专业},
+  supervisor  = {导师姓名},
+  cosupervisor= {},
+  % ---- 时间与分类 ----
+  date        = {2026年6月},
+  fenlei      = {TK},            % 分类号，按《中国图书资料分类法》填写
+  miji        = {公开},          % 公开 / 内部 / 秘密 / 机密
+  % ---- 学位类型 ----
+  % academic 学术学位 | professional 专业学位 | interdisciplinary 学科交叉
+  % equivalent 同等学力 | engineering 工程硕博士培养改革专项
+  degreetype  = {academic},
+  papertype   = {},              % 仅 engineering 需要，如 专题研究类论文
+}
+

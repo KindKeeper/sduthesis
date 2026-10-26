@@ -1,0 +1,59 @@
+%!Mode:: "TeX:UTF-8"
+
+\chapter{绪论}
+\echapter{Introduction}  % 英文目录标题
+
+\section{研究背景与意义}
+\esection{Research Background and Significance}
+
+学位论文是研究生培养的重要环节，规范的论文格式对于保证学位授予质量具有重要意义。相关背景与排版规范可参见文献\cite{example2024,knuth1984texbook}。
+
+\section{研究内容}
+
+本文的主要研究内容包括：
+\begin{enumerate}
+  \item 研究内容一；
+  \item 研究内容二；
+  \item 研究内容三。
+\end{enumerate}
+
+\section{公式与图表约定}
+
+本模板的公式按章编号，编号右端对齐，并与公式之间以点线连接（指南三（十））。例如质量守恒的
+微分形式可写为
+
+\begin{sduequation}
+  \frac{\partial \rho}{\partial t} + \nabla\cdot(\rho\,\mathbf{v}) = 0
+  \label{eq:continuity}
+\end{sduequation}
+
+式~\eqref{eq:continuity} 中 $\rho$ 为密度，$\mathbf{v}$ 为速度矢量。多行公式仍可使用
+\texttt{align} 等环境，编号同样按章编排。
+
+图与表同样按章编号。需要补充说明时使用图注（排在图题下方），用阿拉伯数字按顺序编排
+（指南三（八））：
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.5\textwidth]{figures/SDUWordsColor.pdf}
+  \caption{校名标识（示例图）}
+  \label{fig:sdu}
+  \begin{sdufigurenotes}
+    \item 图注位于图题下方，用阿拉伯数字按顺序编号。
+    \item 正式论文中请将本图替换为自绘插图。
+  \end{sdufigurenotes}
+\end{figure}
+
+\section{论文结构}
+
+本文共分为五章，各章内容安排如下：
+
+第一章为绪论，介绍研究背景和意义。
+
+第二章为相关研究，综述国内外研究现状。
+
+第三章为研究方法，详细介绍本文提出的方法。
+
+第四章为实验，验证方法的有效性。
+
+第五章为总结与展望。

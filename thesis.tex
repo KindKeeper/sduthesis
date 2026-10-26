@@ -1,0 +1,108 @@
+%!Mode:: "TeX:UTF-8"
+%!TEX program = xelatex
+
+% ============================================
+% 山东大学学位论文 —— 主文件
+%
+% 本文件只负责"结构"：文档类选项、前置/正文/后置的顺序。
+% 论文信息一律写在 sdusetup.tex，不要写在这里。
+% ============================================
+
+% ============================================
+% 文档类选项：
+%   master / doctor     学位层次（硕士 / 博士）
+%   colorcover / bwcover 封面用彩色 / 黑白校名标识
+%                        2024 版：学术学位、专业学位等用黑白；
+%                        工程硕博士培养改革专项用彩色
+%   blindreview         盲审模式（隐去作者、导师、学号）
+%   biblatex            使用 biblatex + GB/T 7714-2015 著录
+%   chichapter          章标题用「第一章」（默认用「1」，见指南三（七））
+%   fontset             字体集：windows / mac / ubuntu / fandol
+% ============================================
+\documentclass[
+  master,
+  bwcover,
+  % blindreview,
+  % biblatex,
+  fontset=windows,
+]{sduthesis}
+
+% ============================================
+% 论文基本信息（唯一必改文件）
+% ============================================
+\input{sdusetup}
+
+% ============================================
+% 参考文献数据库（biblatex + GB/T 7714-2015 恒开）
+% ============================================
+\addbibresource{thesis.bib}
+
+% ============================================
+% 正文开始
+% ============================================
+\begin{document}
+
+% ===== 封面与声明（无页码、无页眉）=====
+\maketitle
+\makestatement
+
+% ===== 前置部分（大写罗马数字页码）=====
+% 结构顺序依据 2022 指南 二：摘要 → 外文摘要 → 目录 → 符号说明
+\cleardoublepage
+\pagenumbering{Roman}
+\setcounter{page}{1}
+
+% 中文摘要
+\begin{cnabstract}
+本模板严格依据《山东大学研究生学位论文撰写指南》（2022）与《2024 版学位论文封面（扉页）》编写，
+覆盖封面、声明、摘要、目录、正文、参考文献与各类后置页面。
+
+\cnkeywords{学位论文；\LaTeX{}；模板；山东大学}
+\end{cnabstract}
+
+% 外文摘要
+\begin{enabstract}
+This template follows the Shandong University Guidelines for Writing Postgraduate
+Degree Theses (2022). It covers the cover page, declaration, abstracts, table of
+contents, main matter, bibliography and back matter.
+
+\enkeywords{Thesis; LaTeX; Template; Shandong University}
+\end{enabstract}
+
+% 目录（中英文各一份）
+\tableofcontents
+\tableofengcontents
+
+% 符号说明（可选）
+% \input{chapters/symbols}
+
+% ===== 正文部分（阿拉伯数字页码）=====
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\input{chapters/chapter1-introduction}
+\input{chapters/chapter2-related-work}
+\input{chapters/chapter3-methodology}
+\input{chapters/chapter4-experiments}
+\input{chapters/chapter5-conclusion}
+
+% ===== 后置部分 =====
+
+% 参考文献（biblatex + GB/T 7714-2015；标题进目录、另起一页）
+\printbibliography[heading=bibintoc,title={参考文献}]
+
+% 致谢
+\input{chapters/acknowledgement}
+
+% 攻读学位期间发表的学术论文目录（可选）
+% \input{chapters/publications}
+
+% 学位论文评阅及答辩情况（可选）
+% \input{chapters/defense}
+
+% 附录（可选）
+% \appendix
+% \input{chapters/appendix}
+
+\end{document}
