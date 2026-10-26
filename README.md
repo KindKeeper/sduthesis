@@ -162,6 +162,82 @@ latexmkrc  build.ps1         编译配置与 Windows 一键脚本
 \end{table}
 ```
 
+## 用在其他项目里
+
+三种方式，按需要选：
+
+### 方式一：整包复制（推荐写学位论文）
+
+```powershell
+git clone https://github.com/KindKeeper/sduthesis.git 我的论文
+cd 我的论文
+# 改 sdusetup.tex 填自己的信息，chapters/ 里写正文
+latexmk -xelatex thesis
+```
+
+或者直接下载 GitHub 上的 zip 解压改名。
+
+### 方式二：只借类文件（已有自己的项目结构）
+
+把 `sduthesis.cls` 与两个校名标识复制进你的项目，然后自己写一个主文件：
+
+```
+你的项目/
+├── sduthesis.cls
+├── SDUWords.pdf          ← 或者放进 figures/
+├── SDUWordsColor.pdf
+├── 你的主文件.tex
+├── 你的章节/
+└── 你的图片/
+```
+
+最小主文件：
+
+```latex
+\documentclass[master,bwcover,fontset=windows]{sduthesis}
+
+\sdusetup{
+  title      = {论文题目},
+  titleen    = {Thesis Title},
+  author     = {张三},
+  studentid  = {2020xxxxxxxx},
+  college    = {示例学院},
+  trainingmode = {全日制},
+  major      = {示例专业},
+  supervisor = {导师姓名},
+  date       = {2026年6月},
+  degreetype = {academic},
+}
+
+\begin{document}
+\maketitle
+\makestatement
+\frontmatter ... \mainmatter
+\end{document}
+```
+
+> 校名标识的查找顺序：`figures/` → 当前目录 → TeX 搜索路径。找不到会给出明确警告而不是直接崩。
+
+### 方式三：装到本机，多项目共用
+
+把 `sduthesis.cls` 与两个 PDF 放进 TeX 的用户目录，之后任何项目都能直接 `\documentclass{sduthesis}`：
+
+```powershell
+# Windows（MiKTeX，用户级）
+mkdir C:\Users\<你>\texmf\tex\latex\sduthesis
+copy sduthesis.cls  C:\Users\<你>\texmf\tex\latex\sduthesis\
+copy SDUWords*.pdf  C:\Users\<你>\texmf\tex\latex\sduthesis\
+initexmf --update-fndb
+```
+
+```bash
+# macOS / Linux（TeX Live）
+mkdir -p ~/texmf/tex/latex/sduthesis
+cp sduthesis.cls SDUWords*.pdf ~/texmf/tex/latex/sduthesis/
+texhash
+```
+
+> 这种方式**没有** `thesis.tex` 与 `sdusetup.tex` 模板可抄，主文件得自己写（见方式二）。
 ## 常见问题
 
 **编译报错找不到字体？**
@@ -193,6 +269,7 @@ latexmkrc  build.ps1         编译配置与 Windows 一键脚本
 - 格式依据来自山东大学研究生院与校长办公室发布的规范文件
 
 来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.0**。
+
 
 
 

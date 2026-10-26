@@ -152,11 +152,26 @@
 \newcommand{\sdufenlei}[1]{\sdusetup{fenlei={#1}}}
 \newcommand{\sdumiji}[1]{\sdusetup{miji={#1}}}
 
-% ---- 根据选项派生封面元素 ----
-\newcommand{\sdu@coverlogo}{figures/SDUWords.pdf}
+% ---- 封面校名标识：按候选路径查找，便于整包复用或只拷类文件 ----
+% 查找顺序：figures/ 下 → 当前目录 → TeX 搜索路径（kpsewhich）
+\newcommand{\sdu@coverlogo}{}
+\newcommand{\sdu@picklogo}[1]{%
+  \IfFileExists{figures/#1}{\gdef\sdu@coverlogo{figures/#1}}{%
+  \IfFileExists{#1}{\gdef\sdu@coverlogo{#1}}{%
+  \IfFileExists{figures/SDUWords.pdf}{\gdef\sdu@coverlogo{figures/SDUWords.pdf}}{%
+  \IfFileExists{SDUWords.pdf}{\gdef\sdu@coverlogo{SDUWords.pdf}}{%
+  \gdef\sdu@coverlogo{#1}%
+    \ClassWarningNoLine{sduthesis}{%
+      未找到封面校名标识 #1，请把 SDUWords.pdf / SDUWordsColor.pdf 放到项目 figures/ 目录，或直接放当前目录}%
+  }}}}}
 \if@sducolorcover
-  \renewcommand{\sdu@coverlogo}{figures/SDUWordsColor.pdf}
+  \sdu@picklogo{SDUWordsColor.pdf}
+\else
+  \sdu@picklogo{SDUWords.pdf}
 \fi
+
+% 图片来源：默认在 figures/ 下查找，其次当前目录
+\graphicspath{{figures/}{figures//}{./}}
 
 % 学位类别行（2024 版封面第三行）：查表法，避免多层 \ifstrequal 嵌套
 \def\sdu@dt@academic{（学术学位）}
@@ -676,5 +691,6 @@
 
 
 \endinput
+
 
 
