@@ -51,6 +51,8 @@
 \RequirePackage{fancyhdr}
 \RequirePackage{tocloft}
 \RequirePackage{hyperref}
+% 关闭链接边框：默认的红色/绿色方框会出现在目录与交叉引用处（实测真实论文即暴露）
+\hypersetup{hidelinks, bookmarksnumbered=true}
 \RequirePackage{graphicx}
 \RequirePackage{xcolor}
 \RequirePackage{booktabs}
@@ -674,4 +676,5 @@
 
 
 \endinput
+
 
