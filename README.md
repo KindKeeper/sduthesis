@@ -307,7 +307,8 @@ texhash
   与 CTAN [sduthesis](https://ctan.org/pkg/sduthesis)
 - 格式依据来自山东大学研究生院与校长办公室发布的规范文件
 
-来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.3**。
+来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.4**。
+
 
 
 

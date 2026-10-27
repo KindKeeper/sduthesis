@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.3
+%  版本: 5.0.4
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.3 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.4 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -660,7 +660,7 @@
 }{\clearpage}
 
 \newcommand{\cnkeywords}[1]{%
-  \vspace{1em}%
+  \par\vspace{1em}%
   \noindent{\songti\bfseries 关键词：}#1%
 }
 \let\keywords\cnkeywords
@@ -677,7 +677,7 @@
 }{\clearpage}
 
 \newcommand{\enkeywords}[1]{%
-  \vspace{1em}%
+  \par\vspace{1em}%
   \noindent{\bfseries Key words: }#1%
 }
 \let\keywordsen\enkeywords
@@ -770,6 +770,7 @@
 
 
 \endinput
+
 
 
 
