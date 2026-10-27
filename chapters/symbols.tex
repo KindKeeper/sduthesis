@@ -4,19 +4,27 @@
 
 本文所用主要符号说明如下：
 
-\begin{tabular}{cl}
+% 用 longtable：符号条目多时自动跨页并重复表头，不会溢出页面
+\begin{longtable}{cl}
 \toprule
 符号 & 含义 \\
 \midrule
-$\mathrm{e}$ & 自然对数的底 \\
-$\mathrm{i}$ & 虚数单位 \\
-$\mathbb{R}$ & 实数集 \\
-$\mathbb{C}$ & 复数集 \\
-$\nabla$ & 梯度算子 \\
-$\mathcal{L}$ & 损失函数 \\
-$\theta$ & 模型参数 \\
-$\alpha$ & 学习率 \\
+\endfirsthead
+% 续页重复表头
+\toprule
+符号 & 含义 \\
+\midrule
+\endhead
 \bottomrule
-\end{tabular}
+\endfoot
+$\mathrm{e}$        & 自然对数的底 \\
+$\mathrm{i}$        & 虚数单位 \\
+$\mathbb{R}$        & 实数集 \\
+$\mathbb{C}$        & 复数集 \\
+$\nabla$            & 梯度算子 \\
+$\mathcal{L}$       & 损失函数 \\
+$\theta$            & 模型参数 \\
+$\alpha$            & 学习率 \\
+\end{longtable}
 
 注：如有其他符号，请在此补充说明。

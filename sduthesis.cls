@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.0
+%  版本: 5.0.2
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/27 v5.0.0 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.2 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -151,6 +151,64 @@
 \newcommand{\sdudate}[1]{\sdusetup{date={#1}}}
 \newcommand{\sdufenlei}[1]{\sdusetup{fenlei={#1}}}
 \newcommand{\sdumiji}[1]{\sdusetup{miji={#1}}}
+
+% ---- 必填项校验：缺项只给中文警告，不阻断编译 ----
+\newcommand{\sdu@reqwarn}[2]{%
+  \ifdefempty{#1}{\ClassWarningNoLine{sduthesis}{必填项未填写：#2}}{}}
+\AtBeginDocument{%
+  \sdu@reqwarn{\sdu@title}{title（论文题目）}%
+  \sdu@reqwarn{\sdu@author}{author（作者姓名）}%
+  \sdu@reqwarn{\sdu@studentid}{studentid（学号）}%
+  \sdu@reqwarn{\sdu@college}{college（培养单位）}%
+  \sdu@reqwarn{\sdu@major}{major（专业名称）}%
+  \sdu@reqwarn{\sdu@supervisor}{supervisor（指导教师）}%
+  \sdu@reqwarn{\sdu@date}{date（完成时间）}%
+  % papertype 仅 engineering 使用
+  \ifdefstring{\sdu@degreetype}{engineering}{%
+    \ifdefempty{\sdu@papertype}{%
+      \ClassWarningNoLine{sduthesis}{degreetype=engineering 时 papertype 通常必填}%
+    }{}%
+  }{%
+    \ifdefempty{\sdu@papertype}{}{%
+      \ClassWarningNoLine{sduthesis}{papertype 仅 degreetype=engineering 时使用，当前已忽略语义}%
+    }%
+  }%
+}
+
+% ---- 中英文双标题：一次调用同时写中文目录与英文目录（Contents） ----
+\newcommand{\bichapter}[2]{\chapter{#1}\echapter{#2}}
+\newcommand{\bisection}[2]{\section{#1}\esection{#2}}
+\newcommand{\bisubsection}[2]{\subsection{#1}\esubsection{#2}}
+
+% 章级条目数校验：\echapter 调用次数与 chapter 计数器不一致时警告
+\newif\if@sduengtoc \@sduengtocfalse
+\newcounter{sdu@echapter}
+\AtBeginDocument{\setcounter{sdu@echapter}{0}}
+\AtEndDocument{%
+  \if@sduengtoc
+  \ifnum\value{chapter}=\value{sdu@echapter}\else
+    \ClassWarningNoLine{sduthesis}{%
+      英文目录章条目数（\arabic{sdu@echapter}）与章数（\arabic{chapter}）不一致，%
+      请为每个 \string\chapter 补 \string\echapter 或改用 \string\bichapter}%
+  \fi
+    \fi
+}
+
+% ---- 算法编号：用户自行加载 algorithm / algorithm2e 时统一为按章编号 ----
+\AtBeginDocument{%
+  \@ifpackageloaded{algorithm}{%
+    \@ifundefined{c@algorithm}{}{%
+      \counterwithin{algorithm}{chapter}%
+      \renewcommand{\thealgorithm}{\thechapter-\arabic{algorithm}}%
+      \floatname{algorithm}{算法}}%
+  }{}%
+  \@ifpackageloaded{algorithm2e}{%
+    \@ifundefined{c@algocf}{}{%
+      \counterwithin{algocf}{chapter}%
+      \renewcommand{\thealgocf}{\thechapter-\arabic{algocf}}%
+      \SetAlgorithmName{算法}{算法}{算法列表}}%
+  }{}%
+}
 
 % ---- 封面校名标识：按候选路径查找，便于整包复用或只拷类文件 ----
 % 查找顺序：figures/ 下 → 当前目录 → TeX 搜索路径（kpsewhich）
@@ -436,6 +494,7 @@
 \setlength{\cftsubsecindent}{4em}
 
 \newcommand{\tableofengcontents}{%
+  \@sduengtoctrue
   \clearpage
   \chapter*{Contents}%
   \addcontentsline{toc}{chapter}{Contents}%
@@ -626,7 +685,7 @@
 % 标题由章格式承接：黑体小三加粗、居中、段前 24 磅、段后 18 磅、另起一页
 
 % English TOC commands
-\newcommand{\echapter}[1]{\addcontentsline{toe}{chapter}{#1}}
+\newcommand{\echapter}[1]{\addcontentsline{toe}{chapter}{#1}\stepcounter{sdu@echapter}}
 \newcommand{\esection}[1]{\addcontentsline{toe}{section}{#1}}
 \newcommand{\esubsection}[1]{\addcontentsline{toe}{subsection}{#1}}
 
@@ -691,6 +750,9 @@
 
 
 \endinput
+
+
+
 
 
 

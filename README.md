@@ -238,6 +238,7 @@ texhash
 ```
 
 > 这种方式**没有** `thesis.tex` 与 `sdusetup.tex` 模板可抄，主文件得自己写（见方式二）。
+
 ## 常见问题
 
 **编译报错找不到字体？**
@@ -252,13 +253,37 @@ texhash
 **封面信息对不上？**
 先看 `degreetype` 是否与你的学位类型一致；工程硕博士专项还需要填 `papertype`。
 
+**编译时提示"必填项未填写"？**
+模板会检查 `sdusetup.tex` 里的题目 / 姓名 / 学号 / 学院 / 专业 / 导师 / 日期，缺项编译仍会继续但封面会留白——按警告补全即可。
+
+**参考文献标了 `[J/OL]` 而不是 `[J]`？**
+这是 GB/T 7714-2015 的在线载体标识（条目带 DOI/URL 时自动加）。要一律用印刷版标识，在 `thesis.tex` 里加一行
+`\ExecuteBibliographyOptions{gbmedium=false}`（文件里已有注释示例）。
+
+**英文目录（Contents）少了条目？**
+英文目录靠 `\echapter` / `\esection` / `\esubsection` 手工登记。可直接用包装命令一次写两条：
+`\bichapter{绪论}{Introduction}`、`\bisection{研究背景}{Background}`。
+章级条目数不一致时，编译日志会给出警告。
+
+**算法编号不是 `3-1` 而是 `1`？**
+只要你加载了 `algorithm` 或 `algorithm2e`，模板会自动把编号改为按章（`3-1`）并把题注名改成"算法"。
+
+**`build.ps1 -Check` 报找不到 `tests/`？**
+已修复：仓库不附带测试脚本时自动退回内置快速自检（编译错误 / 未定义引用 / PDF 产出 / 封面字段）。
+页数统计需要 `pypdf`（可选）：`py -m pip install pypdf`。
+
 ## 已知限制
 
 1. **封面信息栏字号**：2022 指南写"四号加粗黑体"，而学校 2024 年下发的封面表单是 15pt 宋体。
    模板采用 2024 表单（较新且更具体）。若学院另有要求，改 `sduthesis.cls` 中封面部分的一处 `\fontsize{15pt}` 即可。
 2. **不支持手写 `thebibliography`**：参考文献固定用 biblatex + GB/T 7714-2015。
-3. **扉页**尚未提供（指南二（二））——如需单独一页扉页，请先确认学院要求。
-4. **许可**：本仓库为 CC BY-NC 4.0；文档类设计源自 CTAN `sduthesis`（LPPL-1.3+），
+3. **`gbmedium` 默认开启**：带 DOI/URL 的条目输出 `[J/OL]`。若学院要求 `[J]`，加一行
+   `\ExecuteBibliographyOptions{gbmedium=false}`。
+4. **扉页**尚未提供（指南二（二））——如需单独一页扉页，请先确认学院要求。
+5. **扩展包加载顺序**：`hyperref` 由模板在导言区加载；`cleveref`、`tcolorbox` 等依赖它的宏包
+   放在 `\begin{document}` 之前自行加载即可。`tabularx` / `siunitx` / `algorithm2e` / `listings`
+   等常用包模板不预加载，避免与其他项目冲突。
+6. **许可**：本仓库为 CC BY-NC 4.0；文档类设计源自 CTAN `sduthesis`（LPPL-1.3+），
    来源与署名见 [`NOTICE`](NOTICE)。
 
 ## 致谢
@@ -268,7 +293,8 @@ texhash
   与 CTAN [sduthesis](https://ctan.org/pkg/sduthesis)
 - 格式依据来自山东大学研究生院与校长办公室发布的规范文件
 
-来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.0**。
+来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.2**。
+
 
 
 

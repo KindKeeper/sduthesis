@@ -34,6 +34,8 @@ build/
 *.snm
 *.vrb
 
+texput.log
+*.texput.log
 # ---------- PDF：只保留 figures 下的图片资源 ----------
 *.pdf
 !figures/*.pdf
@@ -82,3 +84,4 @@ sdusetup.local.tex
 .DS_Store
 Thumbs.db
 desktop.ini
+

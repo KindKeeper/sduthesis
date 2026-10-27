@@ -103,17 +103,64 @@ Write-Host "完成：$pdf" -ForegroundColor Green
 Write-Host "  耗时   $([math]::Round($sw.Elapsed.TotalSeconds,1)) s"
 Write-Host "  错误数 $errs"
 
-if (Get-Command py -ErrorAction SilentlyContinue) {
+# ---------- 页数（可选依赖 pypdf；缺失时不影响编译） ----------
+$hasPy = [bool](Get-Command py -ErrorAction SilentlyContinue)
+$hasPypdf = $false
+if ($hasPy) {
+    $probe = & py -c "import pypdf" 2>$null
+    $hasPypdf = ($LASTEXITCODE -eq 0)
+}
+if ($hasPy -and $hasPypdf) {
     $pages = & py -c "import sys; from pypdf import PdfReader; print(len(PdfReader(sys.argv[1]).pages))" $pdf 2>$null
     if ($pages) { Write-Host "  页数   $pages" }
+} else {
+    Write-Host "  页数   （未安装 pypdf，跳过；如需统计执行 py -m pip install pypdf）" -ForegroundColor DarkGray
 }
 
 # ---------- 合规实测 ----------
 if ($Check) {
-    $python = if (Get-Command py -ErrorAction SilentlyContinue) { 'py' } else { 'python' }
-    Write-Host "`n运行格式合规实测 ..." -ForegroundColor Cyan
-    & $python 'tests/check_spec.py' $pdf $log
+    Write-Host "`n运行格式自检 ..." -ForegroundColor Cyan
+
+    if (Test-Path 'tests/check_spec.py') {
+        # 本地附带完整实测脚本时，直接调用
+        $python = if (Get-Command py -ErrorAction SilentlyContinue) { 'py' } else { 'python' }
+        & $python 'tests/check_spec.py' $pdf $log
+    }
+    else {
+        Write-Host "  （本仓库不附带 tests/ 实测脚本，执行内置快速自检）" -ForegroundColor DarkGray
+
+        $fail = 0
+        # 1) 编译错误
+        if ($errs -eq 0) { Write-Host "  PASS 编译无错误" -ForegroundColor Green }
+        else { Write-Host "  FAIL 编译错误 $errs 处，详见 $log" -ForegroundColor Red; $fail++ }
+
+        # 2) 未定义引用/文献
+        if (Test-Path $log) {
+            $undef = (Select-String -Path $log -Pattern 'There were undefined references|Citation .* undefined|Reference .* undefined' | Measure-Object).Count
+            if ($undef -eq 0) { Write-Host "  PASS 无未定义引用/文献" -ForegroundColor Green }
+            else { Write-Host "  WARN 未定义引用/文献 $undef 处（可能需要多跑一遍 biber/xelatex）" -ForegroundColor Yellow }
+        }
+
+        # 3) PDF 产出
+        if (Test-Path $pdf) { Write-Host "  PASS 产出 $pdf" -ForegroundColor Green }
+        else { Write-Host "  FAIL 未产出 PDF" -ForegroundColor Red; $fail++ }
+
+        # 4) 封面必填项（依赖 pypdf，可选）
+        if ($hasPy -and $hasPypdf) {
+            $cover = & py -c "import sys; from pypdf import PdfReader; print((PdfReader(sys.argv[1]).pages[0].extract_text() or '').replace(chr(10),' '))" $pdf 2>$null
+            $missing = @()
+            foreach ($k in @('分类号', '单位代码', '密', '学', '论文题目')) {
+                if ($cover -notmatch [regex]::Escape($k)) { $missing += $k }
+            }
+            if ($missing.Count -eq 0) { Write-Host "  PASS 封面字段齐全" -ForegroundColor Green }
+            else { Write-Host "  WARN 封面可能缺字段：$($missing -join '、')" -ForegroundColor Yellow }
+        }
+
+        if ($fail -eq 0) { Write-Host "  内置自检通过" -ForegroundColor Green }
+        else { Write-Host "  内置自检失败 $fail 项" -ForegroundColor Red; exit 2 }
+    }
 }
 
 if ($View) { Start-Process $pdf }
+
 
