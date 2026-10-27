@@ -283,7 +283,7 @@ texhash
 5. **扩展包加载顺序**：`hyperref` 由模板在导言区加载；`cleveref`、`tcolorbox` 等依赖它的宏包
    放在 `\begin{document}` 之前自行加载即可。`tabularx` / `siunitx` / `algorithm2e` / `listings`
    等常用包模板不预加载，避免与其他项目冲突。
-6. **许可**：本仓库为 CC BY-NC 4.0；文档类设计源自 CTAN `sduthesis`（LPPL-1.3+），
+6. **许可**：本仓库为 **MIT**，可自由使用、修改、再分发（含商业用途）；文档类设计源自 CTAN `sduthesis`（LPPL-1.3+），
    来源与署名见 [`NOTICE`](NOTICE)。
 
 ## 致谢
@@ -294,6 +294,7 @@ texhash
 - 格式依据来自山东大学研究生院与校长办公室发布的规范文件
 
 来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.2**。
+
 
 
 
