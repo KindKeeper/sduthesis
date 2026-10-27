@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.2
+%  版本: 5.0.3
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.2 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.3 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -530,11 +530,13 @@
 \newcommand{\sdu@fill}[1]{\underline{\makebox[6.4cm][c]{#1}}}
 \newcommand{\sdu@field}[2]{\underline{\makebox[#1][l]{#2}}}
 
-\renewcommand{\maketitle}{%
-  \begin{titlepage}%
-    \thispagestyle{empty}%
-    \linespread{1}\selectfont   % 封面不继承正文行距
-    \setlength{\parindent}{0pt}%
+% 封面主体：先装进 vbox 测量，超出页面时整体缩放（防超长题目压到第二页）
+\newbox\sdu@coverbox
+% 封面主体：先量自然高度；超出页面则整体等比缩放，否则用 \vfill 撑满
+\newbox\sdu@coverbox
+\newcommand{\sdu@coverbody}{%
+  \linespread{1}\selectfont
+  \setlength{\parindent}{0pt}%
     % ---------- 顶部信息 ----------
     {\fontsize{15pt}{20pt}\selectfont\songti
       \noindent
@@ -545,12 +547,12 @@
       学\hspace{1em}号：\sdu@field{3.4cm}{\sdu@studentid}\par
     }%
     % ---------- 校名标识 ----------
-    \vspace{0.6cm}%
+\vspace{0.6cm plus 0.2cm minus 0.45cm}%
     \begin{center}%
       \includegraphics[width=8.8cm]{\sdu@coverlogo}%
     \end{center}%
     % ---------- 学位名 ----------
-    \vspace{0.55cm}%
+\vspace{0.55cm plus 0.2cm minus 0.4cm}%
     \begin{center}%
       {\fontsize{60pt}{68pt}\selectfont\heiti\bfseries
         \if@sdumaster 硕士学位论文\else 博士学位论文\fi\par}%
@@ -566,7 +568,7 @@
       }{}%
     \end{center}%
     % ---------- 题目标签 ----------
-    \vspace{0.5cm}%
+\vspace{0.5cm plus 0.3cm minus 0.35cm}%
     \noindent
     {\fontsize{15pt}{20pt}\selectfont\songti
       \sdu@ifengineering{题目：}{论文题目：}}%
@@ -600,7 +602,20 @@
       {\fontsize{16pt}{20pt}\selectfont\heiti
         \ifdefempty{\sdu@date}{年\hspace{2em}月\hspace{2em}日}{\sdu@date}\par}%
     \end{center}%
-    \vspace{0.8cm}%
+% （末行间距已并入 \vfill，长标题时自动收缩）
+}
+\renewcommand{\maketitle}{%
+  \begin{titlepage}%
+    \thispagestyle{empty}%
+    % 先量自然高度：超出页面时给出可操作警告（不自动缩放，避免缩小字号反而更不美观）
+    \setbox\sdu@coverbox=\vbox{\sdu@coverbody}%
+    \ifdim\ht\sdu@coverbox>\dimexpr\textheight+60pt\relax
+      \ClassWarningNoLine{sduthesis}{%
+        封面内容超出页面高度（\the\ht\sdu@coverbox > \the\textheight）：%
+        请在 sdusetup 的 title / titleen 中用 \string\\ 手动断行，或缩短题目、精简封面信息}%
+    \fi
+    \setbox\sdu@coverbox=\vbox to \textheight{\unvbox\sdu@coverbox}%
+    \noindent\box\sdu@coverbox
   \end{titlepage}%
 }
 
@@ -739,17 +754,25 @@
   }%
 }
 
-% Blind review
-\if@sdublindreview
-  \renewcommand{\sdu@author}{Hidden for Blind Review}
-  \renewcommand{\sdu@supervisor}{Hidden for Blind Review}
-  \renewcommand{\sdu@studentid}{Hidden}
-\fi
+% 盲审模式：隐去封面可识别字段
+% 注意：必须在 \AtBeginDocument 执行——若在类加载期改字段，随后 \sdusetup 会把真实值写回
+% （本模板 v5.0.2 修复的正是这个缺陷：此前 blindreview 实际无效）
+\AtBeginDocument{%
+  \if@sdublindreview
+    \renewcommand{\sdu@author}{（隐去）}%
+    \renewcommand{\sdu@supervisor}{（隐去）}%
+    \renewcommand{\sdu@studentid}{（隐去）}%
+    \renewcommand{\sdu@cosupervisor}{}%
+  \fi
+}
 
 
 
 
 \endinput
+
+
+
 
 
 
