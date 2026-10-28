@@ -76,6 +76,7 @@ latexmkrc  build.ps1         编译配置与 Windows 一键脚本
   bwcover,         % bwcover 黑白 | colorcover 彩色
   % blindreview,   % 盲审：隐去作者、导师、学号
   % chichapter,    % 章标题用「第一章」（默认「1」，工学建议）
+  % flushbottom,   % 页底强制对齐（默认 raggedbottom：段距恒定、页底参差）
   fontset=windows, % windows | mac | ubuntu | fandol
 ]{sduthesis}
 ```
@@ -286,8 +287,14 @@ texhash
 编译日志会给出「封面内容超出页面高度」警告。在 `sdusetup.tex` 的 `title` / `titleen` 里用 `\\` 手动断行，
 或适当缩短题目即可；中英文题目分别控制在两行 / 三行以内最稳妥。
 
-## 已知限制
+**段间距忽大忽小、页面底部参差不齐？**
+模板默认使用 `\raggedbottom`：竖向间距取自然宽度，**段距恒定、页底允许参差**——这与 Word 参照稿一致，
+也是中文论文"固定行距、段前段后为 0"的主流做法。
 
+如果你需要 book 类传统的"页底强制对齐"（副作用是页内弹性间距会被拉大，个别段距可能变成 1.5～3 倍），
+加文档类选项 `flushbottom` 即可。
+
+## 已知限制
 1. **封面信息栏字号**：2022 指南写"四号加粗黑体"，而学校 2024 年下发的封面表单是 15pt 宋体。
    模板采用 2024 表单（较新且更具体）。若学院另有要求，改 `sduthesis.cls` 中封面部分的一处 `\fontsize{15pt}` 即可。
 2. **不支持手写 `thebibliography`**：参考文献固定用 biblatex + GB/T 7714-2015。
@@ -307,7 +314,8 @@ texhash
   与 CTAN [sduthesis](https://ctan.org/pkg/sduthesis)
 - 格式依据来自山东大学研究生院与校长办公室发布的规范文件
 
-来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.4**。
+来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.5**。
+
 
 
 

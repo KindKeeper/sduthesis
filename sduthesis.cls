@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.4
+%  版本: 5.0.5
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.4 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.5 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -37,6 +37,11 @@
   \ClassWarning{sduthesis}{选项 manualbib 已不再支持：参考文献固定使用 biblatex +
     GB/T 7714-2015。请改用 \string\addbibresource 与 \string\printbibliography}%
 }
+
+% 竖向胶默认取自然宽度（段距恒定、页底参差），与 Word 参照稿一致；
+% 需要 book 类传统的页底对齐时，加文档类选项 flushbottom。
+\newif\if@sduflushbottom \@sduflushbottomfalse
+\DeclareOption{flushbottom}{\@sduflushbottomtrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
 
@@ -155,6 +160,11 @@
 % ---- 必填项校验：缺项只给中文警告，不阻断编译 ----
 \newcommand{\sdu@reqwarn}[2]{%
   \ifdefempty{#1}{\ClassWarningNoLine{sduthesis}{必填项未填写：#2}}{}}
+% 竖向胶取自然宽度（段距恒定、页底参差），与 Word 参照稿一致；
+% 需要 book 类传统的页底对齐时，加文档类选项 flushbottom。
+\AtBeginDocument{%
+  \if@sduflushbottom \flushbottom \else \raggedbottom \fi
+}
 \AtBeginDocument{%
   \sdu@reqwarn{\sdu@title}{title（论文题目）}%
   \sdu@reqwarn{\sdu@author}{author（作者姓名）}%
@@ -770,6 +780,7 @@
 
 
 \endinput
+
 
 
 
