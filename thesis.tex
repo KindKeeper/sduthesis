@@ -9,21 +9,26 @@
 % ============================================
 
 % ============================================
-% 文档类选项：
-%   master / doctor     学位层次（硕士 / 博士）
-%   colorcover / bwcover 封面用彩色 / 黑白校名标识
-%                        2024 版：学术学位、专业学位等用黑白；
-%                        工程硕博士培养改革专项用彩色
-%   blindreview         盲审模式（隐去作者、导师、学号）
-%   biblatex            使用 biblatex + GB/T 7714-2015 著录
-%   chichapter          章标题用「第一章」（默认用「1」，见指南三（七））
-%   fontset             字体集：windows / mac / ubuntu / fandol
+% 文档类选项（全部可选；不写则用默认值）
+%
+%   master / doctor       学位层次        默认 master
+%   colorcover / bwcover  封面颜色        默认按学位自动：硕士=山大红、博士=黑白
+%   blindreview           盲审模式        默认关（开启后封面/扉页姓名、学号、导师显示「（隐去）」）
+%   chichapter            章标题「第一章」 默认开
+%   arabicchapter         章标题「1」      默认关（指南三（七）对工学的建议形式）
+%   noflyleaf             不出扉页        默认关（按指南二（二）出封面+扉页两页）
+%   flushbottom           段距可被拉伸    默认关（默认 raggedbottom：段距恒定、页底参差）
+%   fontset=...           字体集          默认 windows（另有 mac / ubuntu / fandol）
+%   biblatex              兼容旧文件用    恒开（参考文献固定 biblatex + GB/T 7714-2015）
 % ============================================
 \documentclass[
   master,
-  % bwcover,              % 显式黑白封面；默认按学位层次自动（硕士红/博士黑白）
-  % blindreview,
-  % biblatex,
+  % bwcover,              % 显式黑白封面（覆盖自动判定）
+  % colorcover,           % 显式红色封面（覆盖自动判定）
+  % blindreview,          % 盲审：封面与扉页隐去可识别信息
+  % arabicchapter,        % 章标题改为「1 绪论」（默认「第一章 绪论」）
+  % noflyleaf,            % 不出扉页（只出封面）
+  % flushbottom,          % 页底强制对齐（默认段距恒定、页底参差）
   fontset=windows,
 ]{sduthesis}
 

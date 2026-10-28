@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.13
+%  版本: 5.0.14
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,13 +17,13 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.13 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.14 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
 \newif\if@sducolorcover \@sducolorcovertrue
 \newif\if@sducoverexplicit \@sducoverexplicitfalse
-\newif\if@sduchichapter \@sduchichapterfalse
+\newif\if@sduchichapter \@sduchichaptertrue   % 默认「第一章 绪论」
 
 \DeclareOption{blindreview}{\@sdublindreviewtrue}
 \DeclareOption{master}{\@sdumastertrue}
@@ -31,6 +31,7 @@
 \DeclareOption{colorcover}{\@sducolorcovertrue\@sducoverexplicittrue}
 \DeclareOption{bwcover}{\@sducolorcoverfalse\@sducoverexplicittrue}
 \DeclareOption{chichapter}{\@sduchichaptertrue}
+\DeclareOption{arabicchapter}{\@sduchichapterfalse}   % 改回「1 绪论」（指南对工学的建议形式）
 % biblatex 现在恒为开启（指南四要求 GB/T 7714-2015），此选项保留仅为兼容旧文件
 \DeclareOption{biblatex}{}
 % 手写 thebibliography 路径已下线
@@ -860,6 +861,7 @@
 
 
 \endinput
+
 
 
 

@@ -73,19 +73,33 @@ latexmkrc  build.ps1         编译配置与 Windows 一键脚本
 整个模板只有 **一个类文件**，没有子目录依赖——下载即可用。
 ## 文档类选项
 
+所有选项都可省略，省略即用**默认值**。默认配置已满足最常见的硕士论文场景。
+
+| 选项 | 默认 | 作用 | 什么时候改 |
+|---|---|---|---|
+| `master` / `doctor` | `master` | 学位层次：封面学位名、页眉称谓、扉页 | 博士论文写 `doctor` |
+| `colorcover` / `bwcover` | **按学位自动**（硕士=山大红、博士=黑白） | 封面颜色 | 学院另有颜色规定时显式指定 |
+| `blindreview` | 关 | 封面与扉页的作者姓名、学号、指导教师显示「（隐去）」 | 盲审送审版 |
+| `chichapter` | **开** | 章标题「第一章 绪论」 | 默认即此 |
+| `arabicchapter` | 关 | 章标题改为「1 绪论」 | 指南三（七）对理学/工学/医学类的建议形式；学院要求阿拉伯数字时用 |
+| `noflyleaf` | 关（即**默认出扉页**） | 只出封面，不出扉页 | 使用研究生院统一印制的封面、只需内页时 |
+| `flushbottom` | 关（默认 `raggedbottom`） | 页底强制对齐；副作用是页内弹性间距可能被拉伸 | 要求每页底部齐平时；默认段距恒定、页底参差 |
+| `fontset=...` | `windows` | 字体集：`windows` / `mac` / `ubuntu` / `fandol` | 非 Windows 系统或精简 TeX 环境 |
+| `biblatex` | 恒开 | 兼容旧写法；参考文献固定 biblatex + GB/T 7714-2015 | 无需使用 |
+| `manualbib` | 已废弃 | 触发弃用警告 | — |
+
+常用组合：
+
 ```latex
-\documentclass[
-  master,          % master 硕士 | doctor 博士
-  % bwcover,       % 显式黑白封面；默认按学位层次自动：硕士=红色、博士=黑白
-  % blindreview,   % 盲审：隐去作者、导师、学号
-  % chichapter,    % 章标题用「第一章」（默认「1」，工学建议）
-  % flushbottom,   % 页底强制对齐（默认 raggedbottom：段距恒定、页底参差）
-  % noflyleaf,     % 不自动生成扉页（默认按指南二（二）生成封面 + 扉页两页）
-  fontset=windows, % windows | mac | ubuntu | fandol
-]{sduthesis}
+\documentclass[master]{sduthesis}                 % 默认：第一章、硕士红封面、带扉页、盲审关
+\documentclass[doctor,arabicchapter]{sduthesis}   % 博士：黑白封面、章号用阿拉伯数字
+\documentclass[master,blindreview]{sduthesis}     % 盲审版
+\documentclass[master,noflyleaf]{sduthesis}       % 学校统一印封面，只用内页
+\documentclass[master,fontset=fandol]{sduthesis}  % 精简 TeX 环境（无系统字体）
 ```
 
-> 封面用彩色还是黑白，看你的学位类型：2024 版表单里工程硕博士专项用彩色，其余用黑白。
+> **章标题默认是「第一章」**。若你的学院要求阿拉伯数字（指南对理学/工学/医学类的建议），加 `arabicchapter`。
+> **封面颜色**按学位自动：2024 版官方表单里硕士 9 种是红色、博士 4 种是黑白。
 
 ## 填写论文信息
 
@@ -403,7 +417,9 @@ texhash
 **封面日期要写到日吗？**
 官方表单印的是「年 月 日」三格，建议写 `2027年6月1日`；若学院只要求年月，写 `2027年6月` 也能编译（模板按你给的字符串原样排版）。
 
-## 已知限制1. **封面信息栏字号**：2022 指南写"四号加粗黑体"，而学校 2024 年下发的封面表单是 15pt 宋体。
+## 已知限制
+
+1. **封面信息栏字号**：2022 指南写"四号加粗黑体"，而学校 2024 年下发的封面表单是 15pt 宋体。
    模板采用 2024 表单（较新且更具体）。若学院另有要求，改 `sduthesis.cls` 中封面部分的一处 `\fontsize{15pt}` 即可。
 2. **不支持手写 `thebibliography`**：参考文献固定用 biblatex + GB/T 7714-2015。
 3. **`gbmedium` 默认开启**：带 DOI/URL 的条目输出 `[J/OL]`。若学院要求 `[J]`，加一行
@@ -421,7 +437,8 @@ texhash
   与 CTAN [sduthesis](https://ctan.org/pkg/sduthesis)
 - 格式依据来自山东大学研究生院与校长办公室发布的规范文件
 
-来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.13**。
+来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.14**。
+
 
 
 
