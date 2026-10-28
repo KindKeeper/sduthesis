@@ -76,7 +76,7 @@ latexmkrc  build.ps1         编译配置与 Windows 一键脚本
 ```latex
 \documentclass[
   master,          % master 硕士 | doctor 博士
-  bwcover,         % bwcover 黑白 | colorcover 彩色
+  % bwcover,       % 显式黑白封面；默认按学位层次自动：硕士=红色、博士=黑白
   % blindreview,   % 盲审：隐去作者、导师、学号
   % chichapter,    % 章标题用「第一章」（默认「1」，工学建议）
   % flushbottom,   % 页底强制对齐（默认 raggedbottom：段距恒定、页底参差）
@@ -273,7 +273,7 @@ latexmk -xelatex thesis
 最小主文件：
 
 ```latex
-\documentclass[master,bwcover,fontset=windows]{sduthesis}
+\documentclass[master,fontset=windows]{sduthesis}
 
 \sdusetup{
   title      = {论文题目},
@@ -355,7 +355,7 @@ texhash
 文档类加 `blindreview` 选项即可：
 
 ```latex
-\documentclass[master,bwcover,blindreview]{sduthesis}
+\documentclass[master,blindreview]{sduthesis}
 ```
 
 封面上的作者姓名、学号、指导教师会显示为「（隐去）」。
@@ -410,7 +410,10 @@ texhash
   与 CTAN [sduthesis](https://ctan.org/pkg/sduthesis)
 - 格式依据来自山东大学研究生院与校长办公室发布的规范文件
 
-来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.9**。
+来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.10**。
+
+
+
 
 
 

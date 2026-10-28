@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.9
+%  版本: 5.0.10
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,18 +17,19 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.9 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.10 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
 \newif\if@sducolorcover \@sducolorcovertrue
+\newif\if@sducoverexplicit \@sducoverexplicitfalse
 \newif\if@sduchichapter \@sduchichapterfalse
 
 \DeclareOption{blindreview}{\@sdublindreviewtrue}
 \DeclareOption{master}{\@sdumastertrue}
 \DeclareOption{doctor}{\@sdumasterfalse}
-\DeclareOption{colorcover}{\@sducolorcovertrue}
-\DeclareOption{bwcover}{\@sducolorcoverfalse}
+\DeclareOption{colorcover}{\@sducolorcovertrue\@sducoverexplicittrue}
+\DeclareOption{bwcover}{\@sducolorcoverfalse\@sducoverexplicittrue}
 \DeclareOption{chichapter}{\@sduchichaptertrue}
 % biblatex 现在恒为开启（指南四要求 GB/T 7714-2015），此选项保留仅为兼容旧文件
 \DeclareOption{biblatex}{}
@@ -48,6 +49,12 @@
 \DeclareOption{noflyleaf}{\@sdunoflyleaftrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
+
+% 封面颜色：2024 版官方表单中，硕士（9 种变体）为红色整版印刷、博士（4 种）为黑白。
+% 未显式指定 colorcover/bwcover 时，按学位层次自动选择；显式指定则以此为准。
+\if@sducoverexplicit\else
+  \if@sdumaster \@sducolorcovertrue \else \@sducolorcoverfalse \fi
+\fi
 
 % Load base class
 \LoadClass[12pt,a4paper,openany,twoside]{book}
@@ -548,6 +555,8 @@
 \newbox\sdu@coverbox
 % 封面主体：先量自然高度；超出页面则整体等比缩放，否则用 \vfill 撑满
 \newcommand{\sdu@coverbody}{%
+  % 2024 版官方表单：硕士封面为整版红色印刷（取样官方 PDF 为 RGB 152,8,16）
+  \if@sducolorcover\definecolor{sducoverred}{RGB}{152,8,16}\color{sducoverred}\fi
   \linespread{1}\selectfont
   \setlength{\parindent}{0pt}%
     % ---------- 顶部信息 ----------
@@ -833,6 +842,7 @@
 
 
 \endinput
+
 
 
 
