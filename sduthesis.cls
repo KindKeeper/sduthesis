@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.17
+%  版本: 5.0.18
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.17 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.18 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -382,7 +382,7 @@
   chapter/format      = \linespread{1}\centering\heiti\bfseries\fontsize{15pt}{20pt}\selectfont,
   chapter/beforeskip  = 24pt,
   chapter/afterskip   = 18pt,
-  chapter/fixskip     = false,
+  chapter/fixskip     = true,   % 章总在新页：fixskip 可去掉页顶重复计入的段前距（实测 55.8→36pt）
   section/format      = \linespread{1}\heiti\bfseries\fontsize{14pt}{20pt}\selectfont,
   section/beforeskip  = 24pt,
   section/afterskip   = 6pt,
@@ -889,6 +889,8 @@
 
 
 \endinput
+
+
 
 
 
