@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.18
+%  版本: 5.0.19
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.18 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.19 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -506,10 +506,18 @@
 
 % ---- 目录 ----
 % 目录标题：小三加粗黑体，居中，段前 24 磅、段后 18 磅（三（五））
-\renewcommand{\cfttoctitlefont}{\hfill\linespread{1}\zihao{-3}\heiti\bfseries}
-\renewcommand{\cftaftertoctitle}{\hfill}
-\setlength{\cftbeforetoctitleskip}{24pt}
-\setlength{\cftaftertoctitleskip}{18pt}
+% 不用 tocloft 的标题机制：\cftbeforetoctitleskip 是普通 \vskip，页顶无法消去段前（实测上留白 55.9pt）。
+% 改用 \chapter*，与章标题共用同一套「页顶段前 24 磅」处理。
+% tocloft 会在 \AtBeginDocument 里重新定义 \tableofcontents，故这里也放到同一时机
+\AtBeginDocument{%
+  \renewcommand{\tableofcontents}{%
+    \clearpage
+    \chapter*{\contentsname}%
+    \markboth{\contentsname}{}%
+    \@starttoc{toc}%
+    \clearpage
+  }%
+}
 
 % 目录条目：小四号宋体，单倍行距（三（五））
 \renewcommand{\cftchapfont}{\linespread{1}\zihao{-4}\songti}
@@ -747,7 +755,7 @@
   \chapter*{摘要}%
   \addcontentsline{toc}{chapter}{摘要}%
   \markboth{摘要}{}%
-  \vspace*{24pt}%
+
   \setlength{\baselineskip}{20pt}%
   \zihao{-4}\songti
 }{\clearpage}
@@ -764,7 +772,7 @@
   \chapter*{ABSTRACT}%
   \addcontentsline{toc}{chapter}{ABSTRACT}%
   \markboth{ABSTRACT}{}%
-  \vspace*{24pt}%
+
   \setlength{\baselineskip}{20pt}%
   \zihao{-4}%
 }{\clearpage}
@@ -889,6 +897,9 @@
 
 
 \endinput
+
+
+
 
 
 
