@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.14
+%  版本: 5.0.15
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.14 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.15 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -575,9 +575,9 @@
     % 官方几何：左列标签 x=90pt、右列 x=360.1pt（相对偏移 270.1pt），两行基线间距 31.2pt。
     % 用固定宽度首列（270.1pt）保证右列起点对齐；标签与值同处一行。
     {\fontsize{15pt}{20pt}\selectfont\songti
-      \renewcommand{\arraystretch}{0.92}%   % 行距对齐官方（实测基线间距 ≈31.2pt）
+      \renewcommand{\arraystretch}{1.56}%   % 行距对齐官方（实测基线间距 ≈31.2pt）
       \noindent
-      \begin{tabular}{@{}p{270.1pt}@{}l@{}}%
+      \begin{tabular}{@{}b{270.1pt}@{}l@{}}%
         \sdu@cred{分类号：}\sdu@topval{\sdu@fenlei} &
         \sdu@cred{单位代码：}\sdu@topvalred{\sdu@unitcode} \\
         \sdu@cred{密\hspace{1em}级：}\sdu@topval{\sdu@miji} &
@@ -861,6 +861,9 @@
 
 
 \endinput
+
+
+
 
 
 
