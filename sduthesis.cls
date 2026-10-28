@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.10
+%  版本: 5.0.11
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.10 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.11 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -555,8 +555,9 @@
 \newbox\sdu@coverbox
 % 封面主体：先量自然高度；超出页面则整体等比缩放，否则用 \vfill 撑满
 \newcommand{\sdu@coverbody}{%
-  % 2024 版官方表单：硕士封面为整版红色印刷（取样官方 PDF 为 RGB 152,8,16）
-  \if@sducolorcover\definecolor{sducoverred}{RGB}{152,8,16}\color{sducoverred}\fi
+  % 山大红（官方标准色）：C26 M100 Y100 K28 —— 见山大文化网「理念识别」页面。
+  % 其 sRGB 近似为 #880000(136,0,0)，与仓库彩色校名标识同色；Word 导出的官方封面 PDF 为 RGB(155,13,20)。
+  \if@sducolorcover\definecolor{sducoverred}{cmyk}{0.26,1,1,0.28}\color{sducoverred}\fi
   \linespread{1}\selectfont
   \setlength{\parindent}{0pt}%
     % ---------- 顶部信息 ----------
@@ -842,6 +843,8 @@
 
 
 \endinput
+
+
 
 
 
