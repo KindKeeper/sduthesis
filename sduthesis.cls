@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.11
+%  版本: 5.0.12
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.11 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.12 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -105,7 +105,7 @@
 %    major         专业名称
 %    supervisor    指导教师
 %    cosupervisor  合作导师（无则留空）
-%    date          论文完成时间（如 2026年6月）
+%    date          论文完成时间：官方表单为「年 月 日」三格，建议写到日（如 2026年6月1日）；只写年月亦可
 %    fenlei        分类号（中国图书资料分类法）
 %    miji          密级（公开 / 内部 / 秘密 / 机密）
 %    unitcode      单位代码（默认 10422）
@@ -548,82 +548,92 @@
 % ============================================================
 
 % 下划线填空
-\newcommand{\sdu@fill}[1]{\underline{\makebox[6.4cm][c]{#1}}}
-\newcommand{\sdu@field}[2]{\underline{\makebox[#1][l]{#2}}}
+\newcommand{\sdu@cred}[1]{{\if@sducolorcover\color{sducoverred}\fi #1}}
+\newcommand{\sdu@cblack}[1]{{\color{black}#1}}
+% 套红：下划线与标签用红，填写内容用黑（官方封面为"套红模板 + 黑色填写"）
+\newcommand{\sdu@fill}[1]{\sdu@cred{\underline{\makebox[6.4cm][c]{\sdu@cblack{#1}}}}}
+\newcommand{\sdu@field}[2]{\sdu@cred{\underline{\makebox[#1][l]{\sdu@cblack{#2}}}}}
+% 预印内容（单位代码）连文字一起用红
+\newcommand{\sdu@fieldred}[2]{\sdu@cred{\underline{\makebox[#1][l]{#2}}}}
 
 % 封面主体：先装进 vbox 测量，超出页面时整体缩放（防超长题目压到第二页）
 \newbox\sdu@coverbox
 % 封面主体：先量自然高度；超出页面则整体等比缩放，否则用 \vfill 撑满
 \newcommand{\sdu@coverbody}{%
   % 山大红（官方标准色）：C26 M100 Y100 K28 —— 见山大文化网「理念识别」页面。
-  % 其 sRGB 近似为 #880000(136,0,0)，与仓库彩色校名标识同色；Word 导出的官方封面 PDF 为 RGB(155,13,20)。
-  \if@sducolorcover\definecolor{sducoverred}{cmyk}{0.26,1,1,0.28}\color{sducoverred}\fi
+  % 颜色规则（2026-10-28 修订）：套印的"模板文字"（标签、学位名、学位类别、下划线）用红；
+  % 由作者填写的内容（分类号、密级、学号、题目、姓名、学院、专业、导师、日期）用黑。
+  \if@sducolorcover\definecolor{sducoverred}{cmyk}{0.26,1,1,0.28}\fi
   \linespread{1}\selectfont
   \setlength{\parindent}{0pt}%
     % ---------- 顶部信息 ----------
     {\fontsize{15pt}{20pt}\selectfont\songti
       \noindent
-      分类号：\sdu@field{2.8cm}{\sdu@fenlei}\hfill 单位代码：\sdu@field{2.4cm}{\sdu@unitcode}\par
+      \sdu@cred{分类号：}\sdu@field{2.8cm}{\sdu@fenlei}\hfill
+      \sdu@cred{单位代码：}\sdu@fieldred{2.4cm}{\sdu@unitcode}\par
       \vspace{10pt}%
       \noindent
-      密\hspace{1em}级：\sdu@field{2.8cm}{\sdu@miji}\hfill
-      学\hspace{1em}号：\sdu@field{3.4cm}{\sdu@studentid}\par
+      \sdu@cred{密\hspace{1em}级：}\sdu@field{2.8cm}{\sdu@miji}\hfill
+      \sdu@cred{学\hspace{1em}号：}\sdu@field{3.4cm}{\sdu@studentid}\par
     }%
     % ---------- 校名标识 ----------
 \vspace{0.6cm plus 0.2cm minus 0.45cm}%
     \begin{center}%
       \includegraphics[width=8.8cm]{\sdu@coverlogo}%
     \end{center}%
-    % ---------- 学位名 ----------
+    % ---------- 学位名（套印文字：红） ----------
 \vspace{0.55cm plus 0.2cm minus 0.4cm}%
     \begin{center}%
       {\fontsize{60pt}{68pt}\selectfont\heiti\bfseries
-        \if@sdumaster 硕士学位论文\else 博士学位论文\fi\par}%
+        \sdu@cred{\if@sdumaster 硕士学位论文\else 博士学位论文\fi}\par}%
       \vspace{0.15cm}%
       {\fontsize{18pt}{22pt}\selectfont
-        \if@sdumaster Thesis for Master Degree\else Dissertation for Doctoral Degree\fi\par}%
+        \sdu@cred{\if@sdumaster Thesis for Master Degree\else Dissertation for Doctoral Degree\fi}\par}%
       \vspace{0.1cm}%
-      {\fontsize{26pt}{32pt}\selectfont\heiti \sdu@degreetypetext\par}%
+      {\fontsize{26pt}{32pt}\selectfont\heiti
+        \sdu@cred{\sdu@degreetypetext}\par}%
       \sdu@ifengineering{%
         \vspace{0.15cm}%
         {\fontsize{22pt}{27pt}\selectfont\heiti\bfseries
-          学位论文类型：\sdu@papertype\par}%
+          \sdu@cred{学位论文类型：\sdu@papertype}\par}%
       }{}%
     \end{center}%
-    % ---------- 题目标签 ----------
+    % ---------- 题目标签（红）＋题目（黑，作者填写） ----------
 \vspace{0.5cm plus 0.3cm minus 0.35cm}%
     \noindent
     {\fontsize{15pt}{20pt}\selectfont\songti
-      \sdu@ifengineering{题目：}{论文题目：}}%
+      \sdu@cred{\sdu@ifengineering{题目：}{论文题目：}}}%
     \parbox[t]{12.3cm}{\raggedright\fontsize{18pt}{24pt}\selectfont\heiti\bfseries
-      \sdu@title}%
+      \sdu@cblack{\sdu@title}}%
     \par
     % 封面的论文题目需中、外文标示（二（一）三（二））：三号加粗
     \ifdefempty{\sdu@titleen}{}{%
       \vspace{0.15cm}%
       \noindent\hspace*{3.1cm}%
       \parbox[t]{12.3cm}{\raggedright\fontsize{16pt}{20pt}\selectfont\bfseries
-        \sdu@titleen}%
+        \sdu@cblack{\sdu@titleen}}%
       \par}%
-    % ---------- 作者信息 ----------
+    % ---------- 作者信息（标签红、填写内容黑） ----------
     \vfill
     \begin{center}%
       {\fontsize{15pt}{20pt}\selectfont\songti
         \renewcommand{\arraystretch}{1.55}%
         \begin{tabular}{@{}r@{\hspace{0.6em}}l@{}}%
-          作\hspace{0.5em}者\hspace{0.5em}姓\hspace{0.5em}名 & \sdu@fill{\sdu@author}\\
-          培\hspace{0.5em}养\hspace{0.5em}单\hspace{0.5em}位 & \sdu@fill{\sdu@college}\\
-          培\hspace{0.5em}养\hspace{0.5em}方\hspace{0.5em}式 & \sdu@fill{\sdu@trainingmode}\\
-          专\hspace{0.5em}业\hspace{0.5em}名\hspace{0.5em}称 & \sdu@fill{\sdu@major}\\
-          指\hspace{0.5em}导\hspace{0.5em}教\hspace{0.5em}师 & \sdu@fill{\sdu@supervisor}\\
-          合\hspace{0.5em}作\hspace{0.5em}导\hspace{0.5em}师 & \sdu@fill{\sdu@cosupervisor}\\
+          \sdu@cred{作\hspace{0.5em}者\hspace{0.5em}姓\hspace{0.5em}名} & \sdu@fill{\sdu@author}\\
+          \sdu@cred{培\hspace{0.5em}养\hspace{0.5em}单\hspace{0.5em}位} & \sdu@fill{\sdu@college}\\
+          \sdu@cred{培\hspace{0.5em}养\hspace{0.5em}方\hspace{0.5em}式} & \sdu@fill{\sdu@trainingmode}\\
+          \sdu@cred{专\hspace{0.5em}业\hspace{0.5em}名\hspace{0.5em}称} & \sdu@fill{\sdu@major}\\
+          \sdu@cred{指\hspace{0.5em}导\hspace{0.5em}教\hspace{0.5em}师} & \sdu@fill{\sdu@supervisor}\\
+          \sdu@cred{合\hspace{0.5em}作\hspace{0.5em}导\hspace{0.5em}师} & \sdu@fill{\sdu@cosupervisor}\\
         \end{tabular}}%
     \end{center}%
-    % ---------- 日期 ----------
+    % ---------- 日期（填写内容黑；未填时给套印红占位） ----------
     \vfill
     \begin{center}%
       {\fontsize{16pt}{20pt}\selectfont\heiti
-        \ifdefempty{\sdu@date}{年\hspace{2em}月\hspace{2em}日}{\sdu@date}\par}%
+        \ifdefempty{\sdu@date}%
+          {\sdu@cred{年\hspace{2em}月\hspace{2em}日}}%
+          {\sdu@cblack{\sdu@date}}\par}%
     \end{center}%
 % （末行间距已并入 \vfill，长标题时自动收缩）
 }
@@ -843,6 +853,8 @@
 
 
 \endinput
+
+
 
 
 
