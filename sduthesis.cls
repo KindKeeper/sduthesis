@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.16
+%  版本: 5.0.17
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.16 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.17 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -375,23 +375,36 @@
   }
 \fi
 
+% 标题行距固定为 20pt（= 正文固定行距），使标题行与正文网格对齐；
+% 并关闭 fixskip：fixskip=true 会清 \prevdepth，丢掉标题前后的行间胶，导致标题间距过小。
+% 数值依据指南 三（七）：章 段前24/段后18、二级 段前24/段后6、三级 段前12/段后6，单倍行距。
 \ctexset{
-  chapter/format      = \linespread{1}\centering\zihao{-3}\heiti\bfseries,
+  chapter/format      = \linespread{1}\centering\heiti\bfseries\fontsize{15pt}{20pt}\selectfont,
   chapter/beforeskip  = 24pt,
   chapter/afterskip   = 18pt,
-  chapter/fixskip     = true,
-  section/format      = \linespread{1}\zihao{4}\heiti\bfseries,
+  chapter/fixskip     = false,
+  section/format      = \linespread{1}\heiti\bfseries\fontsize{14pt}{20pt}\selectfont,
   section/beforeskip  = 24pt,
   section/afterskip   = 6pt,
-  section/fixskip     = true,
-  subsection/format   = \linespread{1}\zihao{-4}\heiti\bfseries,
+  section/fixskip     = false,
+  subsection/format   = \linespread{1}\heiti\bfseries\fontsize{12pt}{20pt}\selectfont,
   subsection/beforeskip = 12pt,
   subsection/afterskip  = 6pt,
-  subsection/fixskip    = true,
+  subsection/fixskip    = false,
   contentsname        = 目录,
   figurename          = 图,
   tablename           = 表,
 }
+
+% 相邻标题间距：LaTeX 的 \@nobreak 会跳过紧随其后标题的「段前」距（只保留上一级段后），
+% 而 Word/规范的语义是段前段后各自生效。这里在下一级标题前清掉 \@nobreak，
+% 让被吞掉的段前距参与 \addvspace（实测：二级→三级 17.1pt → 31.9pt）。
+\let\sdu@orig@section\section
+\let\sdu@orig@subsection\subsection
+\let\sdu@orig@subsubsection\subsubsection
+\renewcommand{\section}{\if@nobreak\@nobreakfalse\fi\sdu@orig@section}
+\renewcommand{\subsection}{\if@nobreak\@nobreakfalse\fi\sdu@orig@subsection}
+\renewcommand{\subsubsection}{\if@nobreak\@nobreakfalse\fi\sdu@orig@subsubsection}
 
 % ---- 页眉页脚 ----
 % 页眉文字固定为「山东大学博（硕）士学位论文」，不再用章节名
@@ -876,6 +889,7 @@
 
 
 \endinput
+
 
 
 
