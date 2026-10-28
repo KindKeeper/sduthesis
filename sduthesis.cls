@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.12
+%  版本: 5.0.13
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.12 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.13 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -548,10 +548,14 @@
 % ============================================================
 
 % 下划线填空
-\newcommand{\sdu@cred}[1]{{\if@sducolorcover\color{sducoverred}\fi #1}}
+\newcommand{\sdu@cred}[1]{{\if@sducolorcover\color{sducoverred}\fi#1}}
 \newcommand{\sdu@cblack}[1]{{\color{black}#1}}
+% 顶部四字段：官方表单为固定两列对齐（左列标签起点 0、右列标签起点 270.1pt），
+% 标签以全角空格补齐等宽，值紧跟标签、不使用下划线。
+\newcommand{\sdu@topval}[1]{\sdu@cblack{#1}}
+\newcommand{\sdu@topvalred}[1]{\sdu@cred{#1}}
 % 套红：下划线与标签用红，填写内容用黑（官方封面为"套红模板 + 黑色填写"）
-\newcommand{\sdu@fill}[1]{\sdu@cred{\underline{\makebox[6.4cm][c]{\sdu@cblack{#1}}}}}
+\newcommand{\sdu@fill}[1]{\sdu@cred{\underline{\makebox[6.87cm][c]{\sdu@cblack{#1}}}}}
 \newcommand{\sdu@field}[2]{\sdu@cred{\underline{\makebox[#1][l]{\sdu@cblack{#2}}}}}
 % 预印内容（单位代码）连文字一起用红
 \newcommand{\sdu@fieldred}[2]{\sdu@cred{\underline{\makebox[#1][l]{#2}}}}
@@ -566,15 +570,18 @@
   \if@sducolorcover\definecolor{sducoverred}{cmyk}{0.26,1,1,0.28}\fi
   \linespread{1}\selectfont
   \setlength{\parindent}{0pt}%
-    % ---------- 顶部信息 ----------
+    % ---------- 顶部信息（官方表单：固定两列对齐、无下划线） ----------
+    % 官方几何：左列标签 x=90pt、右列 x=360.1pt（相对偏移 270.1pt），两行基线间距 31.2pt。
+    % 用固定宽度首列（270.1pt）保证右列起点对齐；标签与值同处一行。
     {\fontsize{15pt}{20pt}\selectfont\songti
+      \renewcommand{\arraystretch}{0.92}%   % 行距对齐官方（实测基线间距 ≈31.2pt）
       \noindent
-      \sdu@cred{分类号：}\sdu@field{2.8cm}{\sdu@fenlei}\hfill
-      \sdu@cred{单位代码：}\sdu@fieldred{2.4cm}{\sdu@unitcode}\par
-      \vspace{10pt}%
-      \noindent
-      \sdu@cred{密\hspace{1em}级：}\sdu@field{2.8cm}{\sdu@miji}\hfill
-      \sdu@cred{学\hspace{1em}号：}\sdu@field{3.4cm}{\sdu@studentid}\par
+      \begin{tabular}{@{}p{270.1pt}@{}l@{}}%
+        \sdu@cred{分类号：}\sdu@topval{\sdu@fenlei} &
+        \sdu@cred{单位代码：}\sdu@topvalred{\sdu@unitcode} \\
+        \sdu@cred{密\hspace{1em}级：}\sdu@topval{\sdu@miji} &
+        \sdu@cred{学\hspace{2em}号：}\sdu@topval{\sdu@studentid} \\
+      \end{tabular}\par
     }%
     % ---------- 校名标识 ----------
 \vspace{0.6cm plus 0.2cm minus 0.45cm}%
@@ -853,6 +860,10 @@
 
 
 \endinput
+
+
+
+
 
 
 

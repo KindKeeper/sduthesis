@@ -94,7 +94,7 @@ latexmkrc  build.ps1         编译配置与 Windows 一键脚本
 | 键 | 填什么 |
 |---|---|
 | `title` / `titleen` | 中文题目 / 外文题目（封面两者都要；外文留空则不显示） |
-| `author` / `studentid` | 姓名 / 学号 |
+| `author` / `studentid` | 姓名 / 学号（学号按学校要求为 7 位数字，如 `2024001`） |
 | `college` | 培养单位（学院） |
 | `trainingmode` | 全日制 / 非全日制 |
 | `major` | 专业名称 |
@@ -279,7 +279,7 @@ latexmk -xelatex thesis
   title      = {论文题目},
   titleen    = {Thesis Title},
   author     = {张三},
-  studentid  = {2020xxxxxxxx},
+  studentid  = {2024001},
   college    = {示例学院},
   trainingmode = {全日制},
   major      = {示例专业},
@@ -421,7 +421,9 @@ texhash
   与 CTAN [sduthesis](https://ctan.org/pkg/sduthesis)
 - 格式依据来自山东大学研究生院与校长办公室发布的规范文件
 
-来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.12**。
+来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.13**。
+
+
 
 
 
