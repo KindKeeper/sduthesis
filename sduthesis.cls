@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.19
+%  版本: 5.0.20
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.19 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.20 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -396,15 +396,44 @@
   tablename           = 表,
 }
 
-% 相邻标题间距：LaTeX 的 \@nobreak 会跳过紧随其后标题的「段前」距（只保留上一级段后），
-% 而 Word/规范的语义是段前段后各自生效。这里在下一级标题前清掉 \@nobreak，
-% 让被吞掉的段前距参与 \addvspace（实测：二级→三级 17.1pt → 31.9pt）。
+% 相邻标题间距：Word 自 2000 起采用 HTML 间距模型——相邻两段「段后」与「段前」**取较大者**
+% （非累加；仅在兼容选项 "Don't use HTML paragraph auto spacing" 时才累加）。
+% LaTeX 的 \addvspace 本意也是取最大值，但 ctex 标题前后插入的胶序列里含负胶与惩罚节点，
+% 实测同一文档中「第一章→1.1」得 36.98pt（合并=max）、「第七章→7.1」得 54.91pt（未合并=18+24），不一致。
+% 做法：用 aftertitle 钩子标记「上一个元素是章标题」，该标记在正文段落开始时由 para/begin 清除；
+% 紧随章标题的下一级标题插入 -18pt 抵消章段后距，并加不可断行惩罚节点，
+% 从而稳定得到 max(18,24)=24 磅（实测 36.98pt）。
+\newif\if@sdu@afterchapter
+\ctexset{
+  chapter/aftertitle = {\global\@sdu@afterchaptertrue},
+}
+\AddToHook{para/begin}{\global\@sdu@afterchapterfalse}
+
 \let\sdu@orig@section\section
 \let\sdu@orig@subsection\subsection
 \let\sdu@orig@subsubsection\subsubsection
-\renewcommand{\section}{\if@nobreak\@nobreakfalse\fi\sdu@orig@section}
-\renewcommand{\subsection}{\if@nobreak\@nobreakfalse\fi\sdu@orig@subsection}
-\renewcommand{\subsubsection}{\if@nobreak\@nobreakfalse\fi\sdu@orig@subsubsection}
+
+\newcommand{\sdu@maxwithchapter}{%
+  \if@sdu@afterchapter
+    \global\@sdu@afterchapterfalse
+    \ifvmode
+      \vskip-18pt  % 抵消章标题的段后 18 磅（段前 24 磅较大，取 max）
+      \penalty\@M
+    \fi
+  \fi}
+
+\renewcommand{\section}{%
+  \sdu@maxwithchapter
+  \if@nobreak\@nobreakfalse\fi
+  \sdu@orig@section}
+\renewcommand{\subsection}{%
+  \sdu@maxwithchapter
+  \if@nobreak\@nobreakfalse\fi
+  \sdu@orig@subsection}
+\renewcommand{\subsubsection}{%
+  \sdu@maxwithchapter
+  \if@nobreak\@nobreakfalse\fi
+  \sdu@orig@subsubsection}
 
 % ---- 页眉页脚 ----
 % 页眉文字固定为「山东大学博（硕）士学位论文」，不再用章节名
@@ -897,6 +926,10 @@
 
 
 \endinput
+
+
+
+
 
 
 
