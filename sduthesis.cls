@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.15
+%  版本: 5.0.16
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.15 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.16 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -585,12 +585,12 @@
       \end{tabular}\par
     }%
     % ---------- 校名标识 ----------
-\vspace{0.6cm plus 0.2cm minus 0.45cm}%
+\vspace{0.6cm plus 0.2cm minus 1.2cm}%
     \begin{center}%
       \includegraphics[width=8.8cm]{\sdu@coverlogo}%
     \end{center}%
     % ---------- 学位名（套印文字：红） ----------
-\vspace{0.55cm plus 0.2cm minus 0.4cm}%
+\vspace{0.55cm plus 0.2cm minus 1.0cm}%
     \begin{center}%
       {\fontsize{60pt}{68pt}\selectfont\heiti\bfseries
         \sdu@cred{\if@sdumaster 硕士学位论文\else 博士学位论文\fi}\par}%
@@ -607,7 +607,7 @@
       }{}%
     \end{center}%
     % ---------- 题目标签（红）＋题目（黑，作者填写） ----------
-\vspace{0.5cm plus 0.3cm minus 0.35cm}%
+\vspace{0.5cm plus 0.3cm minus 0.9cm}%
     \noindent
     {\fontsize{15pt}{20pt}\selectfont\songti
       \sdu@cred{\sdu@ifengineering{题目：}{论文题目：}}}%
@@ -617,7 +617,7 @@
     % 封面的论文题目需中、外文标示（二（一）三（二））：三号加粗
     \ifdefempty{\sdu@titleen}{}{%
       \vspace{0.15cm}%
-      \noindent\hspace*{3.1cm}%
+      \noindent\hspace*{60pt}%
       \parbox[t]{12.3cm}{\raggedright\fontsize{16pt}{20pt}\selectfont\bfseries
         \sdu@cblack{\sdu@titleen}}%
       \par}%
@@ -649,21 +649,36 @@
 % 2022 指南二（二）："论文设扉页，其内容与封面相同"，故默认由 \maketitle 连出两页；
 % 如使用研究生院统一印制的封面、只需内页，可加文档类选项 noflyleaf。
 
+% ---- 封面版心（依据官方 2024 版封面 PDF 实测）----
+% 左右 3.19cm、上 3.48cm、下 2.70cm：四边留白来自对官方封面 300dpi 渲染的墨迹包围盒测量；
+% 左右对称——标题、信息栏、日期的墨迹中心均落在页面中心附近（292.7–296.5pt vs 页面中心 297.7pt）。
+\newlength{\sdu@coverwidth}  \setlength{\sdu@coverwidth}{14.62cm}   % A4 宽 21cm - 2×3.19cm
+\newlength{\sdu@coverheight} \setlength{\sdu@coverheight}{24.31cm}  % 使底边墨迹落在 2.70cm（实测微调）
+\newlength{\sdu@coverleft}   \setlength{\sdu@coverleft}{19.53pt}    % 3.19cm - 2.5cm 版心左边距
+\newlength{\sdu@covertop}    \setlength{\sdu@covertop}{-1.77pt}     % 3.48cm 上留白，扣除零高度盒引入的约 11.8pt 行盒偏移（实测校准）
+
 \newcommand{\sdu@typesetcover}{%
   \clearpage
-    \thispagestyle{empty}%
-    % 先量自然高度：超出页面时给出可操作警告（不自动缩放，避免缩小字号反而更不美观）
-    \setbox\sdu@coverbox=\vbox{\sdu@coverbody}%
-    \ifdim\ht\sdu@coverbox>\dimexpr\textheight+60pt\relax
+  \thispagestyle{empty}%
+  % 封面用官方封面的独立版心；用"零高度盒"定位，避免整页盒子超出正文版心时产生 Overfull 告警。
+  \begingroup
+    \hsize=\sdu@coverwidth \linewidth=\hsize
+    \setbox\sdu@coverbox=\vbox{\hsize=\sdu@coverwidth \linewidth=\hsize \sdu@coverbody}%
+    \ifdim\ht\sdu@coverbox>\dimexpr\sdu@coverheight+80pt\relax
       \if@sducoverwarned\else
         \ClassWarningNoLine{sduthesis}{%
-          封面内容超出页面高度（\the\ht\sdu@coverbox > \the\textheight）：%
+          封面内容过高（\the\ht\sdu@coverbox），已压缩段间距，可能超出下页边距：%
           请在 sdusetup 的 title / titleen 中用 \string\\ 手动断行，或缩短题目、精简封面信息}%
         \@sducoverwarnedtrue
       \fi
     \fi
-    \setbox\sdu@coverbox=\vbox to \textheight{\unvbox\sdu@coverbox}%
-    \noindent\box\sdu@coverbox
+    \setbox\sdu@coverbox=\vbox to \sdu@coverheight{\unvbox\sdu@coverbox}%
+    \noindent\vbox to 0pt{%
+      \vspace*{\sdu@covertop}%
+      \hbox{\hspace*{\sdu@coverleft}\box\sdu@coverbox}%
+      \vss
+    }%
+  \endgroup
   \clearpage
 }
 
@@ -861,6 +876,14 @@
 
 
 \endinput
+
+
+
+
+
+
+
+
 
 
 
