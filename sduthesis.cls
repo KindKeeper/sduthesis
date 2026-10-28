@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.6
+%  版本: 5.0.7
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.6 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.7 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -780,6 +780,7 @@
 
 
 \endinput
+
 
 
 
