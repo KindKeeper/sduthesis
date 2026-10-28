@@ -53,6 +53,9 @@ make
 
 **你只需要动这三处**；其余文件是模板本体，升级模板时可以直接覆盖。
 
+> 按《撰写指南》二（一）（二），`\maketitle` 会**先出封面、再出内容相同的扉页**（共两页，均无页码）；
+> 若用研究生院统一印制的封面、只需内页，加文档类选项 `noflyleaf`。
+
 ## 目录结构
 
 ```
@@ -77,6 +80,7 @@ latexmkrc  build.ps1         编译配置与 Windows 一键脚本
   % blindreview,   % 盲审：隐去作者、导师、学号
   % chichapter,    % 章标题用「第一章」（默认「1」，工学建议）
   % flushbottom,   % 页底强制对齐（默认 raggedbottom：段距恒定、页底参差）
+  % noflyleaf,     % 不自动生成扉页（默认按指南二（二）生成封面 + 扉页两页）
   fontset=windows, % windows | mac | ubuntu | fandol
 ]{sduthesis}
 ```
@@ -393,11 +397,10 @@ texhash
 2. **不支持手写 `thebibliography`**：参考文献固定用 biblatex + GB/T 7714-2015。
 3. **`gbmedium` 默认开启**：带 DOI/URL 的条目输出 `[J/OL]`。若学院要求 `[J]`，加一行
    `\ExecuteBibliographyOptions{gbmedium=false}`。
-4. **扉页**尚未提供（指南二（二））——如需单独一页扉页，请先确认学院要求。
-5. **扩展包加载顺序**：`hyperref` 由模板在导言区加载；`cleveref`、`tcolorbox` 等依赖它的宏包
+4. **扩展包加载顺序**：`hyperref` 由模板在导言区加载；`cleveref`、`tcolorbox` 等依赖它的宏包
    放在 `\begin{document}` 之前自行加载即可。`tabularx` / `siunitx` / `algorithm2e` / `listings`
    等常用包模板不预加载，避免与其他项目冲突。
-6. **许可**：本仓库为 **MIT**，可自由使用、修改、再分发（含商业用途）；文档类设计源自 CTAN `sduthesis`（LPPL-1.3+），
+5. **许可**：本仓库为 **MIT**，可自由使用、修改、再分发（含商业用途）；文档类设计源自 CTAN `sduthesis`（LPPL-1.3+），
    来源与署名见 [`NOTICE`](NOTICE)。
 
 ## 致谢
@@ -407,7 +410,9 @@ texhash
   与 CTAN [sduthesis](https://ctan.org/pkg/sduthesis)
 - 格式依据来自山东大学研究生院与校长办公室发布的规范文件
 
-来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.8**。
+来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.9**。
+
+
 
 
 

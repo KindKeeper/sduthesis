@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.8
+%  版本: 5.0.9
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.8 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.9 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -41,7 +41,11 @@
 % 竖向胶默认取自然宽度（段距恒定、页底参差），与 Word 参照稿一致；
 % 需要 book 类传统的页底对齐时，加文档类选项 flushbottom。
 \newif\if@sduflushbottom \@sduflushbottomfalse
+\newif\if@sdunoflyleaf \@sdunoflyleaffalse
+\newif\if@sduflyleafdone \@sduflyleafdonefalse
+\newif\if@sducoverwarned \@sducoverwarnedfalse
 \DeclareOption{flushbottom}{\@sduflushbottomtrue}
+\DeclareOption{noflyleaf}{\@sdunoflyleaftrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
 
@@ -543,7 +547,6 @@
 % 封面主体：先装进 vbox 测量，超出页面时整体缩放（防超长题目压到第二页）
 \newbox\sdu@coverbox
 % 封面主体：先量自然高度；超出页面则整体等比缩放，否则用 \vfill 撑满
-\newbox\sdu@coverbox
 \newcommand{\sdu@coverbody}{%
   \linespread{1}\selectfont
   \setlength{\parindent}{0pt}%
@@ -614,19 +617,43 @@
     \end{center}%
 % （末行间距已并入 \vfill，长标题时自动收缩）
 }
-\renewcommand{\maketitle}{%
-  \begin{titlepage}%
+% ---- 封面与扉页（指南二（一）（二）：扉页内容与封面相同）----
+% 2022 指南二（二）："论文设扉页，其内容与封面相同"，故默认由 \maketitle 连出两页；
+% 如使用研究生院统一印制的封面、只需内页，可加文档类选项 noflyleaf。
+
+\newcommand{\sdu@typesetcover}{%
+  \clearpage
     \thispagestyle{empty}%
     % 先量自然高度：超出页面时给出可操作警告（不自动缩放，避免缩小字号反而更不美观）
     \setbox\sdu@coverbox=\vbox{\sdu@coverbody}%
     \ifdim\ht\sdu@coverbox>\dimexpr\textheight+60pt\relax
-      \ClassWarningNoLine{sduthesis}{%
-        封面内容超出页面高度（\the\ht\sdu@coverbox > \the\textheight）：%
-        请在 sdusetup 的 title / titleen 中用 \string\\ 手动断行，或缩短题目、精简封面信息}%
+      \if@sducoverwarned\else
+        \ClassWarningNoLine{sduthesis}{%
+          封面内容超出页面高度（\the\ht\sdu@coverbox > \the\textheight）：%
+          请在 sdusetup 的 title / titleen 中用 \string\\ 手动断行，或缩短题目、精简封面信息}%
+        \@sducoverwarnedtrue
+      \fi
     \fi
     \setbox\sdu@coverbox=\vbox to \textheight{\unvbox\sdu@coverbox}%
     \noindent\box\sdu@coverbox
-  \end{titlepage}%
+  \clearpage
+}
+
+\renewcommand{\maketitle}{%
+  \sdu@typesetcover
+  \if@sdunoflyleaf\else
+    \sdu@typesetcover
+    \@sduflyleafdonetrue
+  \fi
+}
+
+\newcommand{\makeflyleaf}{%
+  \if@sduflyleafdone
+    \ClassWarningNoLine{sduthesis}{\string\makeflyleaf：扉页已由 \string\maketitle 自动输出，本次忽略}%
+  \else
+    \sdu@typesetcover
+    \@sduflyleafdonetrue
+  \fi
 }
 
 % ---------------- 原创性声明 ----------------
@@ -806,6 +833,7 @@
 
 
 \endinput
+
 
 
 
