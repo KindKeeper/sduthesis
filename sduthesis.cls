@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.7
+%  版本: 5.0.8
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.7 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/10/28 v5.0.8 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -723,6 +723,32 @@
   \zihao{-4}\songti
 }
 
+% ---- 符号说明表（语法参考 thuthesis 的 denotation：\string\item[符号] 含义）----
+% 与 thuthesis 不同之处：用 longtable 实现，符号多时跨页自动重复表头。
+% 可选参数指定符号列宽度，默认 2.6cm。
+\newcounter{sdu@symrow}
+\newlength{\sdu@symlabelwidth}
+\newenvironment{denotation}[1][2.6cm]{%
+  \par\addvspace{12pt}%
+  \zihao{5}\songti
+  \setlength{\sdu@symlabelwidth}{#1}%
+  \setcounter{sdu@symrow}{0}%
+    \renewcommand{\item}[1][]{%
+      \ifnum\value{sdu@symrow}>0 \\[1pt]\fi
+      \stepcounter{sdu@symrow}##1 & }%
+  \begin{longtable}{@{}p{\sdu@symlabelwidth}p{\dimexpr\linewidth-\sdu@symlabelwidth-2\tabcolsep\relax}@{}}%
+    \toprule
+    {\heiti 符号} & {\heiti 含义} \\ \midrule
+    \endfirsthead
+    \toprule
+    {\heiti 符号} & {\heiti 含义} \\ \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+}{%
+  \\ \end{longtable}%
+}
+
 % Publications
 \newcommand{\makepublications}{%
   \chapter*{攻读学位期间发表的学术论文目录}
@@ -780,6 +806,7 @@
 
 
 \endinput
+
 
 
 

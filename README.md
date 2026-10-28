@@ -163,6 +163,26 @@ latexmkrc  build.ps1         编译配置与 Windows 一键脚本
 \end{table}
 ```
 
+### 符号说明
+
+符号说明页用 `\makesymbolnotation` 起标题，符号表用 `denotation` 环境（语法参考 thuthesis，
+但底层用 `longtable` 实现，**符号多时跨页自动重复表头**）：
+
+```latex
+\makesymbolnotation
+
+\begin{denotation}[2.8cm]        % 可选参数 = 符号列宽度，默认 2.6cm
+  \item[$\rho$]        密度
+  \item[$\mathbf{v}$]  速度矢量
+  \item[$t$]           时间
+  \item[$\nabla$]      梯度算子
+  \item[$\mathrm{SOC}$] 荷电状态（State of Charge）
+\end{denotation}
+```
+
+> 规范（二（七））只要求"介绍论文中所用符号表示的意义"，**未规定字体字号与表格样式**；
+> 模板按三线表 + 宋体五号给出，中英文混排、跨页都不需要你额外处理。
+
 ## 格式细则（图 / 表 / 公式 / 符号）
 
 依据《山东大学研究生学位论文撰写指南》三（一）（八）（九）（十）与二（七）。模板已按下列明确要求实现，
@@ -387,7 +407,9 @@ texhash
   与 CTAN [sduthesis](https://ctan.org/pkg/sduthesis)
 - 格式依据来自山东大学研究生院与校长办公室发布的规范文件
 
-来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.7**。
+来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.8**。
+
+
 
 
 

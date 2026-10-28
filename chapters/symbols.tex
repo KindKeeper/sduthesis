@@ -4,27 +4,47 @@
 
 本文所用主要符号说明如下：
 
-% 用 longtable：符号条目多时自动跨页并重复表头，不会溢出页面
-\begin{longtable}{cl}
-\toprule
-符号 & 含义 \\
-\midrule
-\endfirsthead
-% 续页重复表头
-\toprule
-符号 & 含义 \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-$\mathrm{e}$        & 自然对数的底 \\
-$\mathrm{i}$        & 虚数单位 \\
-$\mathbb{R}$        & 实数集 \\
-$\mathbb{C}$        & 复数集 \\
-$\nabla$            & 梯度算子 \\
-$\mathcal{L}$       & 损失函数 \\
-$\theta$            & 模型参数 \\
-$\alpha$            & 学习率 \\
-\end{longtable}
+\begin{denotation}[2.8cm]
+  \item[$\rho$]        密度
+  \item[$\mathbf{v}$]  速度矢量
+  \item[$t$]           时间
+  \item[$\nabla$]      梯度算子
+  \item[$\mathcal{L}$] 损失函数
+  \item[$\theta$]      模型参数
+  \item[$\alpha$]      学习率
+  \item[$\eta$]        学习率衰减系数
+  \item[$\lambda$]     正则化系数
+  \item[$\mathbf{x}_t$] 第 $t$ 个时间步的观测向量
+  \item[$\mathbf{m}_t$] 第 $t$ 个时间步的缺失掩码
+  \item[$\hat{\mathbf{x}}$] 插补后的重构序列
+  \item[$\mathbb{R}$]  实数集
+  \item[$\mathbb{C}$]  复数集
+  \item[$\mathrm{e}$]  自然对数的底
+  \item[$\mathrm{i}$]  虚数单位
+  \item[$\Delta t$]    采样时间间隔
+  \item[$\sigma$]      观测噪声标准差
+  \item[$\mu$]         均值
+  \item[$\Sigma$]      协方差矩阵
+  \item[$\mathrm{SOC}$] 荷电状态（State of Charge）
+  \item[$\mathrm{SOH}$] 健康状态（State of Health）
+  \item[$\mathrm{RUL}$] 剩余使用寿命（Remaining Useful Life）
+  \item[$\mathrm{BMS}$] 电池管理系统（Battery Management System）
+  \item[$\mathrm{MAE}$] 平均绝对误差
+  \item[$\mathrm{RMSE}$] 均方根误差
+  \item[$\mathrm{MRE}$] 平均相对误差
+  \item[$\mathrm{MCAR}$] 完全随机缺失
+  \item[$\mathrm{MAR}$]  随机缺失
+  \item[$\mathrm{MNAR}$] 非随机缺失
+  \item[$\mathrm{NCDE}$] 神经受控微分方程
+  \item[$\mathrm{ODE}$]  常微分方程
+  \item[$\mathrm{RNN}$]  循环神经网络
+  \item[$\mathrm{LSTM}$] 长短期记忆网络
+  \item[$\mathrm{GAN}$]  生成对抗网络
+  \item[$\mathrm{EKF}$]  扩展卡尔曼滤波
+  \item[$\mathrm{ECM}$]  等效电路模型
+  \item[$\mathrm{SVM}$]  支持向量机
+  \item[$\mathrm{PDE}$]  偏微分方程
+  \item[$\mathrm{GPU}$]  图形处理器
+\end{denotation}
 
-注：如有其他符号，请在此补充说明。
+注：符号按字母顺序排列；如有未列出的符号，请按同样格式补充。
