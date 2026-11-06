@@ -87,6 +87,7 @@ latexmkrc  build.ps1         编译配置与 Windows 一键脚本
 | `fontset=...` | `windows` | 字体集：`windows` / `mac` / `ubuntu` / `fandol` | 非 Windows 系统或精简 TeX 环境 |
 | `biblatex` | 恒开 | 兼容旧写法；参考文献固定 biblatex + GB/T 7714-2015 | 无需使用 |
 | `nodoi` | 关 | 参考文献隐去 DOI（清空 `doi` 字段）；中文期刊随之从 `[J/OL]` 变为 `[J]` | 学院要求印刷版标识、不印 DOI 时 |
+| `noadvisorsign` | 关 | 声明页不排「指导教师签名」行（默认按指南二（三）排作者 + 导师两行） | 学校/学院另发签名页、无需本页签名时 |
 | `manualbib` | 已废弃 | 触发弃用警告 | — |
 
 常用组合：
@@ -182,6 +183,9 @@ latexmkrc  build.ps1         编译配置与 Windows 一键脚本
 \end{table}
 ```
 
+**图题写法**：图题 = 名称 + 必要限定（如「不同缺失率下的 RMSE 对比」），不要写成说明句；
+分项说明放在图注（`sdufigurenotes`）里，图题本身不加标点。
+
 ### 符号说明
 
 符号说明页用 `\makesymbolnotation` 起标题，符号表用 `denotation` 环境（语法参考 thuthesis，
@@ -246,6 +250,7 @@ latexmkrc  build.ps1         编译配置与 Windows 一键脚本
 | 样式 | 一般采用**三线表**（`booktabs`） |
 | 续表 | 转页时重复编号（`续表 2-1 ××××`）**并重复表头** |
 | 字体字号 | 表题宋体**五号**，西文 Times New Roman 五号，居中、无缩进 |
+| 表内文字 | 规范**未规定**字号；模板默认正文五号（10.5pt），需要小五（9pt）用 `\small`，建议全文统一 |
 | 间距 | 段前 6 磅、段后 6 磅、单倍行距 |
 | 标点 | 表序与表名之间空一格；表名后不加标点 |
 | 附注 | 阿拉伯数字按顺序编排，**写在表的下方** |
@@ -383,12 +388,24 @@ texhash
 章级条目数不一致时，编译日志会给出警告；**附录不计入章数校验**（`\appendix` 之后的章不会要求英文条目）。
 若英文目录为空，日志会明确提示"英文目录为空"。
 
+**英文目录的附录、标题、`\label` 写法？**
+
+- 附录章用 `\eappendix{补充材料}{Appendix A Supplementary Material}`：一次写中文标题 + 英文条目，附录不参与章数校验；
+- 英文目录标题可重定义：`\renewcommand{\engcontentsname}{CONTENTS}`（默认 `Contents`）；
+- `\label` 放在标题后的独立行、同行、或标题参数内都可以——v5.0.22 起标题间距为确定性 max，不再受写入节点（`\label`、`\esection` 等）影响。
+
 **算法编号不是 `3-1` 而是 `1`？**
 只要你加载了 `algorithm` 或 `algorithm2e`，模板会自动把编号改为按章（`3-1`）并把题注名改成"算法"。
 
 **`build.ps1 -Check` 报找不到 `tests/`？**
 已修复：仓库不附带测试脚本时自动退回内置快速自检（编译错误 / 未定义引用 / PDF 产出 / 封面字段）。
 页数统计需要 `pypdf`（可选）：`py -m pip install pypdf`。
+
+**工程移植：多遍编译与清理？**
+
+- **biber 工作目录**：必须在工程根目录运行（`biber --output-directory=build build/main`），否则 `references/` 相对路径解析失败；
+- **根目录残留中间件**：工程根残留的 `main.aux/main.bbl` 会被 xelatex 优先读取，导致新增 `\label` 全部显示 `??`——编译前清理根目录中间件；
+- **裸 latexmk**：把模板 `latexmkrc` 复制到自己工程时，记得把 `@default_files` 改成你的主文件名；不复制 rc 时请显式 `latexmk -xelatex main.tex`。
 
 **要用盲审模式？**
 文档类加 `blindreview` 选项即可：
@@ -411,6 +428,36 @@ texhash
 
 `\sdusetup` 写在导言区或 `\begin{document}` 之后都可以——模板在排版封面时会再屏蔽一次，
 不会因书写位置泄漏真实信息。
+
+若送审版要求**整页隐藏**封面/扉页/声明/致谢/成果，用 `\ifblindreview` 在内容层裁剪即可（不必维护第二份 `main.tex`）：
+
+```latex
+\ifblindreview\else
+  \maketitle        % 封面 + 扉页
+  \makestatement    % 原创性声明
+\fi
+...
+\ifblindreview\else
+  \input{chapters/acknowledgement}
+  \input{chapters/publications}
+\fi
+```
+
+**建议**：页眉校名与摘要保留（评阅需要，不属个人身份信息）；致谢/成果必须去掉；附录按可识别信息决定是否脱敏。
+
+**表格文字想统一小五？**
+
+模板默认表体为正文五号（10.5pt）；`\small` 在本字号体系下是 9pt（小五），`\footnotesize` 是 7.5pt。
+规范只规定**表题**五号、未规定表内字号；若全文要统一小五，在导言区加：
+
+```latex
+\AtBeginEnvironment{table}{\small}
+```
+
+**需要插图目录 / 表格目录吗？**
+
+规范未要求，可自行在中文目录后加 `\listoffigures` / `\listoftables`；它们不会自动进入中文目录，
+需要时用 `\addcontentsline{toc}{chapter}{插图目录}`（表格目录同理）。图表目录标题可用 `\renewcommand{\listfigurename}{...}` 调整。
 
 **题目太长，封面显示异常？**
 编译日志会给出「封面内容超出页面高度」警告。在 `sdusetup.tex` 的 `title` / `titleen` 里用 `\\` 手动断行，
@@ -453,6 +500,7 @@ texhash
 
 **封面日期要写到日吗？**
 官方表单印的是「年 月 日」三格，建议写 `2027年6月1日`；若学院只要求年月，写 `2027年6月` 也能编译（模板按你给的字符串原样排版）。
+若 `date` 仍写成 `\today`，封面排版时会给出警告提醒你改成固定日期（避免送审/归档文件里出现编译当天日期）。
 
 **封面四周留白是多少？**
 封面使用与正文不同的版心，数值由官方 2024 版封面 PDF 反推（300dpi 墨迹包围盒）：
@@ -477,7 +525,8 @@ texhash
   与 CTAN [sduthesis](https://ctan.org/pkg/sduthesis)
 - 格式依据来自山东大学研究生院与校长办公室发布的规范文件
 
-来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.22**。
+来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.23**。
+
 
 
 

@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.22
+%  版本: 5.0.23
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/11/06 v5.0.22 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/11/06 v5.0.23 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -45,11 +45,14 @@
 \newif\if@sduflushbottom \@sduflushbottomfalse
 \newif\if@sdunoflyleaf \@sdunoflyleaffalse
 \newif\if@sdu@nodoi \@sdu@nodoifalse
+\newif\if@sdu@noadvisorsign \@sdu@noadvisorsignfalse   % 关闭「指导教师签名」行
+\newif\if@sdu@datewarned \@sdu@datewarnedfalse         % date=\today 只警告一次
 \newif\if@sduflyleafdone \@sduflyleafdonefalse
 \newif\if@sducoverwarned \@sducoverwarnedfalse
 \DeclareOption{flushbottom}{\@sduflushbottomtrue}
 \DeclareOption{noflyleaf}{\@sdunoflyleaftrue}
 \DeclareOption{nodoi}{\@sdu@nodoitrue}
+\DeclareOption{noadvisorsign}{\@sdu@noadvisorsigntrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
 % 公开盲审条件，供用户正文按需 gating（如 \ifblindreview 去掉致谢/成果）
@@ -596,10 +599,11 @@
 \setlength{\cftsecindent}{2em}
 \setlength{\cftsubsecindent}{4em}
 
+\newcommand{\engcontentsname}{Contents}   % 英文目录标题，可重定义为 CONTENTS 等
 \newcommand{\tableofengcontents}{%
   \@sduengtoctrue
   \clearpage
-  \chapter*{Contents}%
+  \chapter*{\engcontentsname}%
   % 注意：不向中文目录写入 Contents 条目（旧版会污染中文目录）
   \markboth{Contents}{}%
   \setlength{\baselineskip}{20pt}%
@@ -742,6 +746,18 @@
   \clearpage
   \thispagestyle{empty}%
   \if@sdublindreview \sdu@applyblind \fi
+  % 定稿提醒：date 仍为 \today（编译日）时给出警告，避免送审/归档出现编译日期
+  \ifdefempty{\sdu@date}{}{%
+    \if@sdu@datewarned\else
+      \begingroup
+        \edef\sdu@datecheck{\sdu@date}%
+        \edef\sdu@todaycheck{\today}%
+        \ifx\sdu@datecheck\sdu@todaycheck
+          \global\@sdu@datewarnedtrue
+          \ClassWarningNoLine{sduthesis}{封面日期仍是编译当天（date=\string\today）；定稿请改为固定日期，如 date={2027年5月20日}}%
+        \fi
+      \endgroup
+    \fi}
   % 封面用官方封面的独立版心；用"零高度盒"定位，避免整页盒子超出正文版心时产生 Overfull 告警。
   \begingroup
     \hsize=\sdu@coverwidth \linewidth=\hsize
@@ -794,7 +810,10 @@
   本人郑重声明：所呈交的学位论文，是本人在导师的指导下，独立进行研究所取得的成果。除文中已经注明引用的内容外，本论文不包含任何其他个人或集体已经发表或撰写过的科研成果。对本文的研究做出重要贡献的个人和集体，均已在文中以明确方式标明。本人完全意识到本声明的法律责任由本人承担。
   \vspace{2cm}
   \begin{flushright}
-    论文作者签名：\underline{\hspace{4cm}} \hspace{1cm} 日期：\underline{\hspace{3cm}}
+    论文作者签名：\underline{\hspace{4cm}} \hspace{1cm} 日期：\underline{\hspace{3cm}}\\[0.9em]
+    \if@sdu@noadvisorsign\else
+    指导教师签名：\underline{\hspace{4cm}} \hspace{1cm} 日期：\underline{\hspace{3cm}}%
+    \fi
   \end{flushright}
   \vspace{2cm}
   \begin{center}
@@ -804,7 +823,10 @@
   本人完全了解山东大学有关保留、使用学位论文的规定，同意学校保留或向国家有关部门或机构送交论文的复印件和电子版，允许论文被查阅和借阅；本人授权山东大学可以将本学位论文的全部或部分内容编入有关数据库进行检索，可以采用影印、缩印或其他复制手段保存论文和汇编本学位论文。
   \vspace{2cm}
   \begin{flushright}
-    论文作者签名：\underline{\hspace{4cm}} \hspace{1cm} 日期：\underline{\hspace{3cm}}
+    论文作者签名：\underline{\hspace{4cm}} \hspace{1cm} 日期：\underline{\hspace{3cm}}\\[0.9em]
+    \if@sdu@noadvisorsign\else
+    指导教师签名：\underline{\hspace{4cm}} \hspace{1cm} 日期：\underline{\hspace{3cm}}%
+    \fi
   \end{flushright}
   \clearpage
 }
@@ -871,6 +893,8 @@
 
 % English TOC commands
 \newcommand{\echapter}[1]{\addcontentsline{toe}{chapter}{#1}\stepcounter{sdu@echapter}}
+% 附录章：一次写中文标题与英文条目（\appendix 之后使用）
+\newcommand{\eappendix}[2]{\chapter{#1}\echapter{#2}}
 \newcommand{\esection}[1]{\addcontentsline{toe}{section}{#1}}
 \newcommand{\esubsection}[1]{\addcontentsline{toe}{subsection}{#1}}
 
@@ -970,6 +994,9 @@
 
 
 \endinput
+
+
+
 
 
 
