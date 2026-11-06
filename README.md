@@ -86,6 +86,7 @@ latexmkrc  build.ps1         编译配置与 Windows 一键脚本
 | `flushbottom` | 关（默认 `raggedbottom`） | 页底强制对齐；副作用是页内弹性间距可能被拉伸 | 要求每页底部齐平时；默认段距恒定、页底参差 |
 | `fontset=...` | `windows` | 字体集：`windows` / `mac` / `ubuntu` / `fandol` | 非 Windows 系统或精简 TeX 环境 |
 | `biblatex` | 恒开 | 兼容旧写法；参考文献固定 biblatex + GB/T 7714-2015 | 无需使用 |
+| `nodoi` | 关 | 参考文献隐去 DOI（清空 `doi` 字段）；中文期刊随之从 `[J/OL]` 变为 `[J]` | 学院要求印刷版标识、不印 DOI 时 |
 | `manualbib` | 已废弃 | 触发弃用警告 | — |
 
 常用组合：
@@ -368,13 +369,19 @@ texhash
 模板会检查 `sdusetup.tex` 里的题目 / 姓名 / 学号 / 学院 / 专业 / 导师 / 日期，缺项编译仍会继续但封面会留白——按警告补全即可。
 
 **参考文献标了 `[J/OL]` 而不是 `[J]`？**
-这是 GB/T 7714-2015 的在线载体标识（条目带 DOI/URL 时自动加）。要一律用印刷版标识，在 `thesis.tex` 里加一行
-`\ExecuteBibliographyOptions{gbmedium=false}`（文件里已有注释示例）。
+
+这是 GB/T 7714-2015 的在线载体标识（条目带 DOI/URL 时自动加）。两种处理：
+
+- 只要"印刷版标识 + 不印 DOI"：加文档类选项 `nodoi`（清 DOI，`[J/OL]` 随之变 `[J]`）；
+- 只想改载体标识、保留 DOI：在 `thesis.tex` 里加 `\ExecuteBibliographyOptions{gbmedium=false}`（文件里已有注释示例）。
+
+模板默认参考文献条目间距已设为 0（段前段后 0、行距 20 磅网格），无需再手工调 `\bibitemsep`。
 
 **英文目录（Contents）少了条目？**
 英文目录靠 `\echapter` / `\esection` / `\esubsection` 手工登记。可直接用包装命令一次写两条：
 `\bichapter{绪论}{Introduction}`、`\bisection{研究背景}{Background}`。
-章级条目数不一致时，编译日志会给出警告。
+章级条目数不一致时，编译日志会给出警告；**附录不计入章数校验**（`\appendix` 之后的章不会要求英文条目）。
+若英文目录为空，日志会明确提示"英文目录为空"。
 
 **算法编号不是 `3-1` 而是 `1`？**
 只要你加载了 `algorithm` 或 `algorithm2e`，模板会自动把编号改为按章（`3-1`）并把题注名改成"算法"。
@@ -390,8 +397,20 @@ texhash
 \documentclass[master,blindreview]{sduthesis}
 ```
 
-封面上的作者姓名、学号、指导教师会显示为「（隐去）」。
-**注意**：致谢、攻读学位期间成果、页眉等处的个人信息属内容层，需你自行删除或脱敏。
+封面与扉页上的作者姓名、学号、指导教师会显示为「（隐去）」；PDF 元数据中的作者字段会被清空。
+页眉「山东大学硕士学位论文」与摘要**保留**（评阅需要，且不属于个人身份信息）。
+
+**注意**：致谢、攻读学位期间成果等属内容层，需自行删除或脱敏。模板提供 `\ifblindreview`
+条件供你在正文里按需裁剪：
+
+```latex
+\ifblindreview\else
+  \input{chapters/acknowledgement}
+\fi
+```
+
+`\sdusetup` 写在导言区或 `\begin{document}` 之后都可以——模板在排版封面时会再屏蔽一次，
+不会因书写位置泄漏真实信息。
 
 **题目太长，封面显示异常？**
 编译日志会给出「封面内容超出页面高度」警告。在 `sdusetup.tex` 的 `title` / `titleen` 里用 `\\` 手动断行，
@@ -443,8 +462,8 @@ texhash
 1. **封面信息栏字号**：2022 指南写"四号加粗黑体"，而学校 2024 年下发的封面表单是 15pt 宋体。
    模板采用 2024 表单（较新且更具体）。若学院另有要求，改 `sduthesis.cls` 中封面部分的一处 `\fontsize{15pt}` 即可。
 2. **不支持手写 `thebibliography`**：参考文献固定用 biblatex + GB/T 7714-2015。
-3. **`gbmedium` 默认开启**：带 DOI/URL 的条目输出 `[J/OL]`。若学院要求 `[J]`，加一行
-   `\ExecuteBibliographyOptions{gbmedium=false}`。
+3. **参考文献默认带 DOI 的条目输出 `[J/OL]`**：若学院要求 `[J]`，加文档类选项 `nodoi`
+   （清 DOI 并去掉 `/OL`），或 `\ExecuteBibliographyOptions{gbmedium=false}`（仅改载体标识、保留 DOI）。
 4. **扩展包加载顺序**：`hyperref` 由模板在导言区加载；`cleveref`、`tcolorbox` 等依赖它的宏包
    放在 `\begin{document}` 之前自行加载即可。`tabularx` / `siunitx` / `algorithm2e` / `listings`
    等常用包模板不预加载，避免与其他项目冲突。
@@ -458,7 +477,8 @@ texhash
   与 CTAN [sduthesis](https://ctan.org/pkg/sduthesis)
 - 格式依据来自山东大学研究生院与校长办公室发布的规范文件
 
-来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.20**。
+来源、署名与许可见 [`NOTICE`](NOTICE)。当前版本 **v5.0.21**。
+
 
 
 

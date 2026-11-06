@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.20
+%  版本: 5.0.21
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/10/28 v5.0.20 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/11/06 v5.0.21 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -44,12 +44,16 @@
 % 需要 book 类传统的页底对齐时，加文档类选项 flushbottom。
 \newif\if@sduflushbottom \@sduflushbottomfalse
 \newif\if@sdunoflyleaf \@sdunoflyleaffalse
+\newif\if@sdu@nodoi \@sdu@nodoifalse
 \newif\if@sduflyleafdone \@sduflyleafdonefalse
 \newif\if@sducoverwarned \@sducoverwarnedfalse
 \DeclareOption{flushbottom}{\@sduflushbottomtrue}
 \DeclareOption{noflyleaf}{\@sdunoflyleaftrue}
+\DeclareOption{nodoi}{\@sdu@nodoitrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
 \ProcessOptions\relax
+% 公开盲审条件，供用户正文按需 gating（如 \ifblindreview 去掉致谢/成果）
+\let\ifblindreview\if@sdublindreview
 
 % 封面颜色：2024 版官方表单中，硕士（9 种变体）为红色整版印刷、博士（4 种）为黑白。
 % 未显式指定 colorcover/bwcover 时，按学位层次自动选择；显式指定则以此为准。
@@ -202,18 +206,28 @@
 \newcommand{\bisection}[2]{\section{#1}\esection{#2}}
 \newcommand{\bisubsection}[2]{\subsection{#1}\esubsection{#2}}
 
-% 章级条目数校验：\echapter 调用次数与 chapter 计数器不一致时警告
+% 章级条目数校验：只统计正文（附录不计），并提示英文目录为空的情况
 \newif\if@sduengtoc \@sduengtocfalse
 \newcounter{sdu@echapter}
+\def\sdu@mainchapternum{}   % 进入附录前的正文章数；无附录时在文末取最终值
 \AtBeginDocument{\setcounter{sdu@echapter}{0}}
 \AtEndDocument{%
   \if@sduengtoc
-  \ifnum\value{chapter}=\value{sdu@echapter}\else
-    \ClassWarningNoLine{sduthesis}{%
-      英文目录章条目数（\arabic{sdu@echapter}）与章数（\arabic{chapter}）不一致，%
-      请为每个 \string\chapter 补 \string\echapter 或改用 \string\bichapter}%
-  \fi
+    \ifx\sdu@mainchapternum\@empty
+      \xdef\sdu@mainchapternum{\number\value{chapter}}%
     \fi
+    \ifnum\value{sdu@echapter}=\sdu@mainchapternum
+    \else
+      \ifnum\value{sdu@echapter}=\z@
+        \ClassWarningNoLine{sduthesis}{%
+          英文目录为空：请用 \string\bichapter（或 \string\echapter）登记英文目录条目}%
+      \else
+        \ClassWarningNoLine{sduthesis}{%
+          英文目录章条目数（\arabic{sdu@echapter}）与正文章数（\sdu@mainchapternum）不一致，%
+          请为每个 \string\chapter 补 \string\echapter 或改用 \string\bichapter（附录不计入）}%
+      \fi
+    \fi
+  \fi
 }
 
 % ---- 算法编号：用户自行加载 algorithm / algorithm2e 时统一为按章编号 ----
@@ -569,7 +583,7 @@
   \@sduengtoctrue
   \clearpage
   \chapter*{Contents}%
-  \addcontentsline{toc}{chapter}{Contents}%
+  % 注意：不向中文目录写入 Contents 条目（旧版会污染中文目录）
   \markboth{Contents}{}%
   \setlength{\baselineskip}{20pt}%
   \zihao{-4}%
@@ -606,7 +620,7 @@
 \newcommand{\sdu@topval}[1]{\sdu@cblack{#1}}
 \newcommand{\sdu@topvalred}[1]{\sdu@cred{#1}}
 % 套红：下划线与标签用红，填写内容用黑（官方封面为"套红模板 + 黑色填写"）
-\newcommand{\sdu@fill}[1]{\sdu@cred{\underline{\makebox[6.87cm][c]{\sdu@cblack{#1}}}}}
+\newcommand{\sdu@fill}[1]{\sdu@cred{\underline{\makebox[6.87cm][c]{\sdu@cblack{\CJKspace #1}}}}}
 \newcommand{\sdu@field}[2]{\sdu@cred{\underline{\makebox[#1][l]{\sdu@cblack{#2}}}}}
 % 预印内容（单位代码）连文字一起用红
 \newcommand{\sdu@fieldred}[2]{\sdu@cred{\underline{\makebox[#1][l]{#2}}}}
@@ -710,6 +724,7 @@
 \newcommand{\sdu@typesetcover}{%
   \clearpage
   \thispagestyle{empty}%
+  \if@sdublindreview \sdu@applyblind \fi
   % 封面用官方封面的独立版心；用"零高度盒"定位，避免整页盒子超出正文版心时产生 Overfull 告警。
   \begingroup
     \hsize=\sdu@coverwidth \linewidth=\hsize
@@ -827,6 +842,14 @@
 \RequirePackage[backend=biber,style=gb7714-2015]{biblatex}
 % 参考文献文本：宋体小四，固定值 20 磅（三（十二））
 \renewcommand*{\bibfont}{\zihao{-4}\songti}
+% 条目间距：指南 三（十二）要求段前 0、段后 0、固定值 20 磅；
+% biblatex 默认会给条目额外间距（实测约 25pt 行距），这里归零使其回到 20 磅网格。
+\setlength{\bibitemsep}{0pt}
+\setlength{\bibparsep}{0pt}
+% nodoi 选项：隐去 DOI。清空 DOI 后中文期刊不再出现 [J/OL] 的 /OL 标识（仍建议配合 gbmedium=false）。
+\if@sdu@nodoi
+  \AtEveryBibitem{\clearfield{doi}}%
+\fi
 % 标题由章格式承接：黑体小三加粗、居中、段前 24 磅、段后 18 磅、另起一页
 
 % English TOC commands
@@ -900,6 +923,8 @@
 \AtBeginDocument{%
   \let\old@appendix\appendix
   \renewcommand{\appendix}{%
+    % 记录进入附录前的正文章数：英文目录校验只针对正文，附录不计入
+    \xdef\sdu@mainchapternum{\number\value{chapter}}%
     \old@appendix
     \ctexset{
       chapter={
@@ -910,22 +935,27 @@
   }%
 }
 
-% 盲审模式：隐去封面可识别字段
-% 注意：必须在 \AtBeginDocument 执行——若在类加载期改字段，随后 \sdusetup 会把真实值写回
-% （本模板 v5.0.2 修复的正是这个缺陷：此前 blindreview 实际无效）
-\AtBeginDocument{%
-  \if@sdublindreview
-    \renewcommand{\sdu@author}{（隐去）}%
-    \renewcommand{\sdu@supervisor}{（隐去）}%
-    \renewcommand{\sdu@studentid}{（隐去）}%
-    \renewcommand{\sdu@cosupervisor}{}%
-  \fi
+% 盲审模式：隐去封面/扉页的可识别字段，并清空 PDF 元数据中的作者
+% 注意：必须在"排版封面时"再执行一次——\sdusetup 若写在 \begin{document} 之后，
+% 只在 \AtBeginDocument 屏蔽会被随后写入的真实值覆盖（v5.0.2 曾修复过一次同类问题，
+% v5.0.21 再补"排版时屏蔽"，使两种写法都安全）。
+\newcommand{\sdu@applyblind}{%
+  \renewcommand{\sdu@author}{（隐去）}%
+  \renewcommand{\sdu@supervisor}{（隐去）}%
+  \renewcommand{\sdu@studentid}{（隐去）}%
+  \renewcommand{\sdu@cosupervisor}{}%
+  \hypersetup{pdfauthor={}}% 页眉校名与摘要保留（盲审评阅必需，非个人身份信息）
 }
+\AtBeginDocument{\if@sdublindreview \sdu@applyblind \fi}
 
 
 
 
 \endinput
+
+
+
+
 
 
 
