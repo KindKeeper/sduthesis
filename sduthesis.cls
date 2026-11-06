@@ -1,7 +1,7 @@
 % ============================================================
 %  sduthesis.cls —— 山东大学研究生学位论文文档类
 %
-%  版本: 5.0.21
+%  版本: 5.0.22
 %  引擎: XeLaTeX
 %
 %  依据:
@@ -17,7 +17,7 @@
 % ============================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sduthesis}[2026/11/06 v5.0.21 SDU Thesis]
+\ProvidesClass{sduthesis}[2026/11/06 v5.0.22 SDU Thesis]
 % Options
 \newif\if@sdublindreview \@sdublindreviewfalse
 \newif\if@sdumaster \@sdumastertrue
@@ -210,21 +210,25 @@
 \newif\if@sduengtoc \@sduengtocfalse
 \newcounter{sdu@echapter}
 \def\sdu@mainchapternum{}   % 进入附录前的正文章数；无附录时在文末取最终值
+\def\sdu@mainengtoe{}       % 进入附录前已登记的正文英文条目数（附录条目不计入校验）
 \AtBeginDocument{\setcounter{sdu@echapter}{0}}
 \AtEndDocument{%
   \if@sduengtoc
     \ifx\sdu@mainchapternum\@empty
       \xdef\sdu@mainchapternum{\number\value{chapter}}%
     \fi
-    \ifnum\value{sdu@echapter}=\sdu@mainchapternum
+    \ifx\sdu@mainengtoe\@empty
+      \xdef\sdu@mainengtoe{\number\value{sdu@echapter}}%
+    \fi
+    \ifnum\sdu@mainengtoe=\sdu@mainchapternum
     \else
-      \ifnum\value{sdu@echapter}=\z@
+      \ifnum\sdu@mainengtoe=\z@
         \ClassWarningNoLine{sduthesis}{%
           英文目录为空：请用 \string\bichapter（或 \string\echapter）登记英文目录条目}%
       \else
         \ClassWarningNoLine{sduthesis}{%
-          英文目录章条目数（\arabic{sdu@echapter}）与正文章数（\sdu@mainchapternum）不一致，%
-          请为每个 \string\chapter 补 \string\echapter 或改用 \string\bichapter（附录不计入）}%
+          英文目录正文条目数（\sdu@mainengtoe）与正文章数（\sdu@mainchapternum）不一致，%
+          请为每个 \string\chapter 补 \string\echapter 或改用 \string\bichapter（附录条目不计入）}%
       \fi
     \fi
   \fi
@@ -412,40 +416,53 @@
 
 % 相邻标题间距：Word 自 2000 起采用 HTML 间距模型——相邻两段「段后」与「段前」**取较大者**
 % （非累加；仅在兼容选项 "Don't use HTML paragraph auto spacing" 时才累加）。
-% LaTeX 的 \addvspace 本意也是取最大值，但 ctex 标题前后插入的胶序列里含负胶与惩罚节点，
-% 实测同一文档中「第一章→1.1」得 36.98pt（合并=max）、「第七章→7.1」得 54.91pt（未合并=18+24），不一致。
-% 做法：用 aftertitle 钩子标记「上一个元素是章标题」，该标记在正文段落开始时由 para/begin 清除；
-% 紧随章标题的下一级标题插入 -18pt 抵消章段后距，并加不可断行惩罚节点，
-% 从而稳定得到 max(18,24)=24 磅（实测 36.98pt）。
-\newif\if@sdu@afterchapter
+% LaTeX 的 \addvspace 本意也是取最大值，但 ctex 标题前后的胶序列里含负胶与惩罚节点，
+% 且两标题之间若夹了 \addcontentsline 等 write 节点（例如 \esection、\echapter），
+% \addvspace 无法合并，会退化为「段后+段前」相加：
+%   实测同一文档中 章→二级 出现 36.98pt（max）与 54.91pt（相加）两种值；
+%   二级→三级 在夹 \esection 时出现 37.86pt（相加）与 31.88pt（max）两种值。
+%
+% 统一做法：用 aftertitle 钩子记录上一标题的段后值 \sdu@prevskip（章 18 / 节 6 / 小节 6），
+% 该记录在正文段落开始时（para/begin）清除；紧随标题的下一级标题插入
+%   \vskip -min(上一级段后, 本级段前)  +  \penalty\@M
+% 再让 ctex 照常加本级段前（\addvspace 因前面是非胶的 penalty 而不会误删我们的负胶），
+% 于是无论中间是否夹 write 节点，总间距恒为「段后 + 段前 - min(段后,段前) = max(段后,段前)」。
+\newif\if@sdu@afterheading
+\newdimen\sdu@prevskip
 \ctexset{
-  chapter/aftertitle = {\global\@sdu@afterchaptertrue},
+  chapter/aftertitle    = {\global\sdu@prevskip=18pt \global\@sdu@afterheadingtrue},
+  section/aftertitle    = {\global\sdu@prevskip=6pt  \global\@sdu@afterheadingtrue},
+  subsection/aftertitle = {\global\sdu@prevskip=6pt  \global\@sdu@afterheadingtrue},
 }
-\AddToHook{para/begin}{\global\@sdu@afterchapterfalse}
+\AddToHook{para/begin}{\global\@sdu@afterheadingfalse}
 
 \let\sdu@orig@section\section
 \let\sdu@orig@subsection\subsection
 \let\sdu@orig@subsubsection\subsubsection
 
-\newcommand{\sdu@maxwithchapter}{%
-  \if@sdu@afterchapter
-    \global\@sdu@afterchapterfalse
+% #1 = 本级的规范段前值（章后接节为 24pt，节后接小节为 12pt）
+\newcommand{\sdu@maxwithprevious}[1]{%
+  \if@sdu@afterheading
+    \global\@sdu@afterheadingfalse
+    \par
     \ifvmode
-      \vskip-18pt  % 抵消章标题的段后 18 磅（段前 24 磅较大，取 max）
+      \dimen@=\sdu@prevskip
+      \ifdim\dimen@>#1\relax \dimen@=#1\relax \fi   % min(段后, 段前)
+      \vskip-\dimen@
       \penalty\@M
     \fi
   \fi}
 
 \renewcommand{\section}{%
-  \sdu@maxwithchapter
+  \sdu@maxwithprevious{24pt}%
   \if@nobreak\@nobreakfalse\fi
   \sdu@orig@section}
 \renewcommand{\subsection}{%
-  \sdu@maxwithchapter
+  \sdu@maxwithprevious{12pt}%
   \if@nobreak\@nobreakfalse\fi
   \sdu@orig@subsection}
 \renewcommand{\subsubsection}{%
-  \sdu@maxwithchapter
+  \sdu@maxwithprevious{12pt}%
   \if@nobreak\@nobreakfalse\fi
   \sdu@orig@subsubsection}
 
@@ -923,8 +940,9 @@
 \AtBeginDocument{%
   \let\old@appendix\appendix
   \renewcommand{\appendix}{%
-    % 记录进入附录前的正文章数：英文目录校验只针对正文，附录不计入
+    % 记录进入附录前的正文章数与已登记正文条目数：英文目录校验只针对正文，附录不计入
     \xdef\sdu@mainchapternum{\number\value{chapter}}%
+    \xdef\sdu@mainengtoe{\number\value{sdu@echapter}}%
     \old@appendix
     \ctexset{
       chapter={
@@ -952,6 +970,8 @@
 
 
 \endinput
+
+
 
 
 
